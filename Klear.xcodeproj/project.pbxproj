@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		979054E228E9EF4800FF8E13 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E128E9EF4700FF8E13 /* WidgetKit.framework */; };
+		979054E428E9EF4800FF8E13 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E328E9EF4800FF8E13 /* SwiftUI.framework */; };
+		979054E728E9EF4800FF8E13 /* KlearWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979054E628E9EF4800FF8E13 /* KlearWidget.swift */; };
+		979054EA28E9EF4900FF8E13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 979054E928E9EF4900FF8E13 /* Assets.xcassets */; };
+		979054EC28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 979054E828E9EF4800FF8E13 /* KlearWidget.intentdefinition */; };
+		979054ED28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 979054E828E9EF4800FF8E13 /* KlearWidget.intentdefinition */; };
+		979054F028E9EF4900FF8E13 /* KlearWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C91B24A5002700209708 /* AppDelegate.swift */; };
 		BD14C91E24A5002700209708 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C91D24A5002700209708 /* SceneDelegate.swift */; };
 		BD14C92024A5002700209708 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C91F24A5002700209708 /* ViewController.swift */; };
@@ -21,7 +28,38 @@
 		BD14C93E24A5017E00209708 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD14C93D24A5017E00209708 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		979054EE28E9EF4900FF8E13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BD14C91024A5002700209708 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 979054DE28E9EF4700FF8E13;
+			remoteInfo = KlearWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		979054F128E9EF4900FF8E13 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				979054F028E9EF4900FF8E13 /* KlearWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KlearWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		979054E128E9EF4700FF8E13 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		979054E328E9EF4800FF8E13 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		979054E628E9EF4800FF8E13 /* KlearWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlearWidget.swift; sourceTree = "<group>"; };
+		979054E828E9EF4800FF8E13 /* KlearWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = KlearWidget.intentdefinition; sourceTree = "<group>"; };
+		979054E928E9EF4900FF8E13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		979054EB28E9EF4900FF8E13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BD14C91824A5002700209708 /* Klear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Klear.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD14C91B24A5002700209708 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BD14C91D24A5002700209708 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -39,6 +77,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		979054DC28E9EF4700FF8E13 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				979054E428E9EF4800FF8E13 /* SwiftUI.framework in Frameworks */,
+				979054E228E9EF4800FF8E13 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BD14C91524A5002700209708 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -49,10 +96,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		979054E028E9EF4700FF8E13 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				979054E128E9EF4700FF8E13 /* WidgetKit.framework */,
+				979054E328E9EF4800FF8E13 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		979054E528E9EF4800FF8E13 /* KlearWidget */ = {
+			isa = PBXGroup;
+			children = (
+				979054E628E9EF4800FF8E13 /* KlearWidget.swift */,
+				979054E828E9EF4800FF8E13 /* KlearWidget.intentdefinition */,
+				979054E928E9EF4900FF8E13 /* Assets.xcassets */,
+				979054EB28E9EF4900FF8E13 /* Info.plist */,
+			);
+			path = KlearWidget;
+			sourceTree = "<group>";
+		};
 		BD14C90F24A5002700209708 = {
 			isa = PBXGroup;
 			children = (
 				BD14C91A24A5002700209708 /* Klear */,
+				979054E528E9EF4800FF8E13 /* KlearWidget */,
+				979054E028E9EF4700FF8E13 /* Frameworks */,
 				BD14C91924A5002700209708 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				BD14C91824A5002700209708 /* Klear.app */,
+				979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +158,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		979054DE28E9EF4700FF8E13 /* KlearWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 979054F428E9EF4900FF8E13 /* Build configuration list for PBXNativeTarget "KlearWidgetExtension" */;
+			buildPhases = (
+				979054DB28E9EF4700FF8E13 /* Sources */,
+				979054DC28E9EF4700FF8E13 /* Frameworks */,
+				979054DD28E9EF4700FF8E13 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KlearWidgetExtension;
+			productName = KlearWidgetExtension;
+			productReference = 979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		BD14C91724A5002700209708 /* Klear */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BD14C92C24A5002900209708 /* Build configuration list for PBXNativeTarget "Klear" */;
@@ -95,10 +182,12 @@
 				BD14C91424A5002700209708 /* Sources */,
 				BD14C91524A5002700209708 /* Frameworks */,
 				BD14C91624A5002700209708 /* Resources */,
+				979054F128E9EF4900FF8E13 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				979054EF28E9EF4900FF8E13 /* PBXTargetDependency */,
 			);
 			name = Klear;
 			productName = Klear;
@@ -111,10 +200,13 @@
 		BD14C91024A5002700209708 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1120;
+				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Yorwos Pallikaropoulos";
 				TargetAttributes = {
+					979054DE28E9EF4700FF8E13 = {
+						CreatedOnToolsVersion = 14.0.1;
+					};
 					BD14C91724A5002700209708 = {
 						CreatedOnToolsVersion = 11.2.1;
 					};
@@ -134,11 +226,20 @@
 			projectRoot = "";
 			targets = (
 				BD14C91724A5002700209708 /* Klear */,
+				979054DE28E9EF4700FF8E13 /* KlearWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		979054DD28E9EF4700FF8E13 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				979054EA28E9EF4900FF8E13 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BD14C91624A5002700209708 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -154,10 +255,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		979054DB28E9EF4700FF8E13 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				979054EC28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */,
+				979054E728E9EF4800FF8E13 /* KlearWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BD14C91424A5002700209708 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				979054ED28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */,
 				BD14C93724A5012B00209708 /* TodoItem.swift in Sources */,
 				BD14C92024A5002700209708 /* ViewController.swift in Sources */,
 				BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */,
@@ -169,6 +280,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		979054EF28E9EF4900FF8E13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 979054DE28E9EF4700FF8E13 /* KlearWidgetExtension */;
+			targetProxy = 979054EE28E9EF4900FF8E13 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		BD14C92624A5002900209708 /* LaunchScreen.storyboard */ = {
@@ -182,6 +301,66 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		979054F228E9EF4900FF8E13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YWXKS4E5M8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KlearWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KlearWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Yorwos Pallikaropoulos. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "eu.yorwos.Klear-2.KlearWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		979054F328E9EF4900FF8E13 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YWXKS4E5M8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KlearWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KlearWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Yorwos Pallikaropoulos. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "eu.yorwos.Klear-2.KlearWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		BD14C92A24A5002900209708 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -299,9 +478,10 @@
 		BD14C92D24A5002900209708 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9BY2L497RJ;
+				DEVELOPMENT_TEAM = YWXKS4E5M8;
 				INFOPLIST_FILE = Klear/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -318,9 +498,10 @@
 		BD14C92E24A5002900209708 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9BY2L497RJ;
+				DEVELOPMENT_TEAM = YWXKS4E5M8;
 				INFOPLIST_FILE = Klear/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -337,6 +518,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		979054F428E9EF4900FF8E13 /* Build configuration list for PBXNativeTarget "KlearWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				979054F228E9EF4900FF8E13 /* Debug */,
+				979054F328E9EF4900FF8E13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BD14C91324A5002700209708 /* Build configuration list for PBXProject "Klear" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -144,6 +144,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
     
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        print("Begin edit cell")
         TodoCell.isTextFieldEditing = true
         delegate?.todoCellWillModify(cell: self) // used to inform the controller that text editing is about to begin
         
@@ -388,17 +389,22 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
 
 //    this is used to trigger textField editing
     @objc func handleTap(sender: UITapGestureRecognizer) {
+        print("Tapped cell")
         switch sender.state {
-        
         case .ended:
+            print("Tap ended")
+
 //            check of the textField is part of the active view hierarchy
 //            (otherwise canBecomeFirstResponder has undefined results)
             if textField.window != nil && !isAlreadyDone{
-                if textField.canBecomeFirstResponder{
+                print("Can become responder")
+
+//                if textField.canBecomeFirstResponder{
+                    print("Cell in edit mode")
                     textField.becomeFirstResponder()
                     textField.isUserInteractionEnabled = true
                     TodoCell.isTextFieldEditing = true
-                }
+//                }
             }
 
         default:

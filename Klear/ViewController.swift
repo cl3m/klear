@@ -1186,6 +1186,7 @@ extension ViewController:TodoCellDelegate{
         }
         editingMode = true // block any gestures outside the textField
         editingCell = cell
+        print("Editing cell")
 
         view.addGestureRecognizer(tapGestureRecognizer)
         
