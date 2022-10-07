@@ -17,6 +17,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+//        let cdStack = CoreDataStack.regularStore()
+//        ItemRepo.makeIn(moc: cdStack.moc!)?.title = "blah"
+//        try! cdStack.moc!.save()
+
         let dummyView = UIView()
         self.window?.addSubview(dummyView)
         dummyView.becomeFirstResponder()

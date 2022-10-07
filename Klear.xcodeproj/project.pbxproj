@@ -9,8 +9,11 @@
 /* Begin PBXBuildFile section */
 		974212C128EF697200FA3E37 /* DataRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C028EF697200FA3E37 /* DataRepo.swift */; };
 		974212C328EF6C6900FA3E37 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C228EF6C6900FA3E37 /* DataController.swift */; };
-		974212C528EF6FFD00FA3E37 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C428EF6FFD00FA3E37 /* Item.swift */; };
+		974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C428EF6FFD00FA3E37 /* ItemRepo.swift */; };
 		974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C628EF73BF00FA3E37 /* CoreDataStack.swift */; };
+		974212CD28F0E3B500FA3E37 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */; };
+		974212CF28F0E3E700FA3E37 /* ItemRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C428EF6FFD00FA3E37 /* ItemRepo.swift */; };
+		974212D028F0E3F900FA3E37 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C628EF73BF00FA3E37 /* CoreDataStack.swift */; };
 		977887FF28EA2FD400C92F0A /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */; };
 		979054E228E9EF4800FF8E13 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E128E9EF4700FF8E13 /* WidgetKit.framework */; };
 		979054E428E9EF4800FF8E13 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E328E9EF4800FF8E13 /* SwiftUI.framework */; };
@@ -60,8 +63,10 @@
 /* Begin PBXFileReference section */
 		974212C028EF697200FA3E37 /* DataRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRepo.swift; sourceTree = "<group>"; };
 		974212C228EF6C6900FA3E37 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
-		974212C428EF6FFD00FA3E37 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		974212C428EF6FFD00FA3E37 /* ItemRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRepo.swift; sourceTree = "<group>"; };
 		974212C628EF73BF00FA3E37 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		974212C828F092C400FA3E37 /* Klear.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Klear.entitlements; sourceTree = "<group>"; };
+		974212C928F093FE00FA3E37 /* KlearWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KlearWidgetExtension.entitlements; sourceTree = "<group>"; };
 		977887FE28EA2FD400C92F0A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KlearWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		979054E128E9EF4700FF8E13 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -129,6 +134,7 @@
 		BD14C90F24A5002700209708 = {
 			isa = PBXGroup;
 			children = (
+				974212C928F093FE00FA3E37 /* KlearWidgetExtension.entitlements */,
 				BD14C91A24A5002700209708 /* Klear */,
 				979054E528E9EF4800FF8E13 /* KlearWidget */,
 				979054E028E9EF4700FF8E13 /* Frameworks */,
@@ -148,6 +154,9 @@
 		BD14C91A24A5002700209708 /* Klear */ = {
 			isa = PBXGroup;
 			children = (
+				BD14C92924A5002900209708 /* Info.plist */,
+				977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */,
+				974212C828F092C400FA3E37 /* Klear.entitlements */,
 				BD14C91B24A5002700209708 /* AppDelegate.swift */,
 				BD14C91D24A5002700209708 /* SceneDelegate.swift */,
 				BD14C92F24A5012A00209708 /* DummyCell.swift */,
@@ -160,12 +169,10 @@
 				BD14C93D24A5017E00209708 /* Main.storyboard */,
 				BD14C92424A5002900209708 /* Assets.xcassets */,
 				BD14C92624A5002900209708 /* LaunchScreen.storyboard */,
-				BD14C92924A5002900209708 /* Info.plist */,
-				977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */,
 				974212C028EF697200FA3E37 /* DataRepo.swift */,
 				974212C228EF6C6900FA3E37 /* DataController.swift */,
-				974212C428EF6FFD00FA3E37 /* Item.swift */,
 				974212C628EF73BF00FA3E37 /* CoreDataStack.swift */,
+				974212C428EF6FFD00FA3E37 /* ItemRepo.swift */,
 			);
 			path = Klear;
 			sourceTree = "<group>";
@@ -274,8 +281,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				974212D028F0E3F900FA3E37 /* CoreDataStack.swift in Sources */,
 				979054EC28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */,
 				979054E728E9EF4800FF8E13 /* KlearWidget.swift in Sources */,
+				974212CF28F0E3E700FA3E37 /* ItemRepo.swift in Sources */,
+				974212CD28F0E3B500FA3E37 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,7 +297,7 @@
 				BD14C93724A5012B00209708 /* TodoItem.swift in Sources */,
 				BD14C92024A5002700209708 /* ViewController.swift in Sources */,
 				BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */,
-				974212C528EF6FFD00FA3E37 /* Item.swift in Sources */,
+				974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */,
 				BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */,
 				974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */,
 				974212C328EF6C6900FA3E37 /* DataController.swift in Sources */,
@@ -328,6 +338,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = KlearWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
@@ -358,6 +369,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = KlearWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
@@ -500,6 +512,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Klear/Klear.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
 				INFOPLIST_FILE = Klear/Info.plist;
@@ -520,6 +533,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Klear/Klear.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
 				INFOPLIST_FILE = Klear/Info.plist;

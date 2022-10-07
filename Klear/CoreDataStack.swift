@@ -45,14 +45,18 @@ class CoreDataStack {
 
     class func storeUrl() -> NSURL {
         
+
         let fm = FileManager.default
-        let urls = fm.urls(for: .documentDirectory, in:.userDomainMask) as [NSURL]
-        let documentDirUrl = urls[0]
+        let documentDirUrl = fm.containerURL(
+              forSecurityApplicationGroupIdentifier: "group.com.skw.klear")!
+
+        //        let urls = fm.urls(for: .documentDirectory, in:.userDomainMask) as [NSURL]
+//        let documentDirUrl = urls[0]
         let dataDir = documentDirUrl.appendingPathComponent("NoteNote/Data")
-        let sqliteUrl = dataDir?.appendingPathComponent("notenote.sqlite")
+        let sqliteUrl = dataDir.appendingPathComponent("notenote.sqlite")
         
         do {
-            try fm.createDirectory(at: dataDir!, withIntermediateDirectories: true)
+            try fm.createDirectory(at: dataDir, withIntermediateDirectories: true)
         } catch {}
 //
 //        if fm.createDirectory(at: dataDir!, withIntermediateDirectories: true, attributes: nil) {
@@ -60,14 +64,14 @@ class CoreDataStack {
 //        }
 //
 //
-        if fm.fileExists(atPath: sqliteUrl!.path) {
+        if fm.fileExists(atPath: sqliteUrl.path) {
             print("File exists")
 
         } else {
-            NSData().write(to: sqliteUrl!, atomically: true)
+            NSData().write(to: sqliteUrl, atomically: true)
         }
 
-        return sqliteUrl! as NSURL
+        return sqliteUrl as NSURL
     }
     
 }
