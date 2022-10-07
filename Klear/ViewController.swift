@@ -168,27 +168,14 @@ class ViewController: UIViewController {
         return listOfItems.filter({$0.done == false}).count
     }
     
-    //    only for debug purposes
-    private func createDummyTodoItems(count: Int = 10){
-//        let todoItem = TodoItem(name: "Todo \(count + 1)", done: true)
-//        listOfItems.append(todoItem)
-//        let todoItem2 = TodoItem(name: "Todo \(count + 2)", done: true)
-//        listOfItems.append(todoItem2)
-        for i in 1...count{
-            let todoItem = TodoItem(name: "Todo \(count - i)", done: false)
-            listOfItems.append(todoItem)
-        }
-    }
-    
     private func createTodoItems(){
-        let items = ["Soup", "Fruit", "Cheese ", "Yogurt", "Salt", "Pepper", "Honey", "Sugar", "Vinegar", "Milk", "Eggs", "Cheese", "Cooking oil", "Butter", "Pasta", "Rice", "Bread", "All-purpose flour", "Breakfast cereal ", "White beans", "Green lentils", "Red kidney beans", "Red meat", "Chicken"]
+      
+        var items: [Item] = ItemRepo.all()
         
         items.forEach { (item) in
-            let todoItem = TodoItem(name: item, done: false)
+            let todoItem = TodoItem(name: item.title!, done: false)
             listOfItems.append(todoItem)
         }
-            
-        
     }
     
     

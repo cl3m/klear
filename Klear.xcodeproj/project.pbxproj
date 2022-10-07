@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		974212C128EF697200FA3E37 /* DataRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C028EF697200FA3E37 /* DataRepo.swift */; };
+		974212C328EF6C6900FA3E37 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C228EF6C6900FA3E37 /* DataController.swift */; };
+		974212C528EF6FFD00FA3E37 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C428EF6FFD00FA3E37 /* Item.swift */; };
+		974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C628EF73BF00FA3E37 /* CoreDataStack.swift */; };
+		977887FF28EA2FD400C92F0A /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */; };
 		979054E228E9EF4800FF8E13 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E128E9EF4700FF8E13 /* WidgetKit.framework */; };
 		979054E428E9EF4800FF8E13 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E328E9EF4800FF8E13 /* SwiftUI.framework */; };
 		979054E728E9EF4800FF8E13 /* KlearWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979054E628E9EF4800FF8E13 /* KlearWidget.swift */; };
@@ -53,6 +58,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		974212C028EF697200FA3E37 /* DataRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRepo.swift; sourceTree = "<group>"; };
+		974212C228EF6C6900FA3E37 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		974212C428EF6FFD00FA3E37 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		974212C628EF73BF00FA3E37 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		977887FE28EA2FD400C92F0A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KlearWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		979054E128E9EF4700FF8E13 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		979054E328E9EF4800FF8E13 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -151,6 +161,11 @@
 				BD14C92424A5002900209708 /* Assets.xcassets */,
 				BD14C92624A5002900209708 /* LaunchScreen.storyboard */,
 				BD14C92924A5002900209708 /* Info.plist */,
+				977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */,
+				974212C028EF697200FA3E37 /* DataRepo.swift */,
+				974212C228EF6C6900FA3E37 /* DataController.swift */,
+				974212C428EF6FFD00FA3E37 /* Item.swift */,
+				974212C628EF73BF00FA3E37 /* CoreDataStack.swift */,
 			);
 			path = Klear;
 			sourceTree = "<group>";
@@ -272,10 +287,15 @@
 				BD14C93724A5012B00209708 /* TodoItem.swift in Sources */,
 				BD14C92024A5002700209708 /* ViewController.swift in Sources */,
 				BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */,
+				974212C528EF6FFD00FA3E37 /* Item.swift in Sources */,
 				BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */,
+				974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */,
+				974212C328EF6C6900FA3E37 /* DataController.swift in Sources */,
+				977887FF28EA2FD400C92F0A /* Model.xcdatamodeld in Sources */,
 				BD14C93624A5012B00209708 /* DummyCell.swift in Sources */,
 				BD14C91E24A5002700209708 /* SceneDelegate.swift in Sources */,
 				BD14C93C24A5012B00209708 /* TodoCell.swift in Sources */,
+				974212C128EF697200FA3E37 /* DataRepo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,7 +503,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
 				INFOPLIST_FILE = Klear/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -503,7 +523,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
 				INFOPLIST_FILE = Klear/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -546,6 +566,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				977887FE28EA2FD400C92F0A /* Model.xcdatamodel */,
+			);
+			currentVersion = 977887FE28EA2FD400C92F0A /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = BD14C91024A5002700209708 /* Project object */;
 }

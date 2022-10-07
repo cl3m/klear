@@ -8,17 +8,15 @@
 
 import UIKit
 
+import CoreData
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
-
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         
-        print("Start Klear")
-//        hack? for faster first responder:
         let dummyView = UIView()
         self.window?.addSubview(dummyView)
         dummyView.becomeFirstResponder()
@@ -26,9 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         dummyView.removeFromSuperview()
         return true
     }
-
-
-
 
 }
 
