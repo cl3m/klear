@@ -1251,7 +1251,12 @@ extension ViewController:TodoCellDelegate{
         
         
         updateCellAndReturnToPreviousState(cell: cell)
+        print("Cell was modified " + cell.textField.text!)
         
+        let cdStack = CoreDataStack.regularStore()
+        ItemRepo.makeIn(moc: cdStack.moc!)?.title = cell.textField.text!
+        try! cdStack.moc!.save()
+
     }
     
     // Only this one is needed to delete the cell (update the model/controller)

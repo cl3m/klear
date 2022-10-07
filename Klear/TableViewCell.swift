@@ -35,6 +35,7 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate{
     
     func setText(_ text:String){
         textField.text = text
+        print("Set test to " + text)
     }
     
  

@@ -23,8 +23,6 @@ class DummyCell: UIView {
     @IBOutlet var textField: UITextField!
     
    
-    
-    
     override init(frame:CGRect){
         super.init(frame: frame)
         setupView()
@@ -35,7 +33,7 @@ class DummyCell: UIView {
     }
     
     func setupView(){
-        
+
         Bundle.main.loadNibNamed("DummyCell", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
@@ -47,11 +45,6 @@ class DummyCell: UIView {
 //        textLayer.foregroundColor = UIColor.white.cgColor
 //
 //        self.layer.addSublayer(textLayer)
-        
-        
-        
-        
-        
         
     }
     

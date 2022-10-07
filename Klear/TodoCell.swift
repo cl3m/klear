@@ -139,7 +139,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         textField.isUserInteractionEnabled = false
         delegate?.todoCellWasModified(cell: self) // used to inform the controller that text editing was done
         TodoCell.isTextFieldEditing = false
-        
+        print("End editing " + textField.text!)
     }
     
     
