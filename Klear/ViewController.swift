@@ -8,6 +8,7 @@
 
 import UIKit
 import MobileCoreServices
+import WidgetKit
 
 class ViewController: UIViewController {
     private var isAnimating = false
@@ -392,6 +393,7 @@ class ViewController: UIViewController {
                 let victim = self.listOfItems[index]
                 self.moc.delete(victim)
                 try! self.moc.save()
+                WidgetCenter.shared.reloadAllTimelines()
                 self.listOfItems.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
                 
@@ -1291,7 +1293,7 @@ extension ViewController:TodoCellDelegate{
         let cdStack = CoreDataStack.regularStore()
         ItemRepo.makeIn(moc: cdStack.moc!)?.title = cell.textField.text!
         try! cdStack.moc!.save()
-
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
     // Only this one is needed to delete the cell (update the model/controller)
@@ -1306,6 +1308,7 @@ extension ViewController:TodoCellDelegate{
                 let victim = self.listOfItems[index]
                 self.moc.delete(victim)
                 try! self.moc.save()
+                WidgetCenter.shared.reloadAllTimelines()
                 
                 listOfItems.remove(at: index)
                 tableView.deleteRows(at: [indexPath], with: .left)
