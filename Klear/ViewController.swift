@@ -12,6 +12,7 @@ import MobileCoreServices
 class ViewController: UIViewController {
     private var isAnimating = false
     
+    private let moc = CoreDataStack.regularStore().moc!
     
 //    MARK: - outlets
   
@@ -140,7 +141,7 @@ class ViewController: UIViewController {
 //    MARK: - model helper functions
     
 //    this holds the actual items
-    private var listOfItems:[TodoItem] = []
+    private var listOfItems:[Item] = []
     
  
     private var indexOfLastDoneItem:Int{
@@ -169,22 +170,25 @@ class ViewController: UIViewController {
     }
     
     private func createTodoItems(){
-      
-        var items: [Item] = ItemRepo.all()
+        print("Load items...")
+        var items: [Item] = ItemRepo.allIn(moc: moc)
+        listOfItems = items
+//        items.forEach { (item) in
+//            let todoItem = TodoItem(name: item.title!, done: false)
+//            listOfItems.append(todoItem)
+//        }
+//        listOfItems.forEach { print($0.title) }
         
-        items.forEach { (item) in
-            let todoItem = TodoItem(name: item.title!, done: false)
-            listOfItems.append(todoItem)
-        }
     }
     
     
     // model and tableView have opposite orders
     // new item is appended in the model array , but shown first in the tableView
-    private var orderedListOfItems:[TodoItem] {
+    private var orderedListOfItems:[Item] {
         get{
-            listOfItems.reversed()
-            
+            var reversed = listOfItems
+            reversed.reverse()
+            return reversed
         }
     }
     
@@ -369,6 +373,43 @@ class ViewController: UIViewController {
     */
 
     
+    fileprivate func deleteCell(_ index: Int, indexPath: IndexPath, cell: TodoCell) {
+        print("Delete")
+        let distance = 1.5 * tableView.frame.width
+        
+        UIView.animate(withDuration: 0.2, animations: {
+            cell.leftConstraint.constant = -distance
+            cell.rightConstraint.constant = distance
+            cell.checkLabelLeftConstraint.constant = -distance
+            cell.deleteLabelRightConstraint.constant = distance
+            cell.layoutIfNeeded()
+            
+        }) { (ended) in
+            
+            // update the model
+            self.tableView.performBatchUpdates({
+                print("Remove item")
+                let victim = self.listOfItems[index]
+                self.moc.delete(victim)
+                try! self.moc.save()
+                self.listOfItems.remove(at: index)
+                self.tableView.deleteRows(at: [indexPath], with: .none)
+                
+                
+            }) { (done) in
+                self.tableView.reloadData()
+                
+            }
+        }
+    }
+    
+    fileprivate func updateCell(_ index: Int, cell: TodoCell) {
+        //else just update the model
+        print(">>> Update title from " + (self.listOfItems[index].title ?? "") + " to " +  cell.textField.text!)
+        self.listOfItems[index].title = cell.textField.text!
+        self.tableView.reloadData()
+    }
+    
     private func updateCellAndReturnToPreviousState(cell: TodoCell){
         
         // disable scrolling of table view until we've finished with animations
@@ -377,6 +418,8 @@ class ViewController: UIViewController {
         // if all text was deleted, mark the cell for deletion
         let cellIsToBeDeleted =  cell.textField.text! == "" ? true  : false
 
+        print("to prev state")
+//        listOfItems.forEach { print($0.title) }
         
         // scroll back to the position before editing started
         // make the cells opaque
@@ -388,7 +431,7 @@ class ViewController: UIViewController {
             }
             
         }) {(ended) in
-            
+            print(".")
             //reset the content inset
             self.tableView.contentInset.bottom = self.tableView.rowHeight
             self.editingCell = nil
@@ -397,32 +440,10 @@ class ViewController: UIViewController {
             if let tableView = cell.superview as? UITableView, let indexPath = tableView.indexPath(for: cell){
                 let index = self.rowNumberToIndex(from: indexPath.row)
                 if cellIsToBeDeleted{
-                    let distance = 1.5 * tableView.frame.width
-                    
-                    UIView.animate(withDuration: 0.2, animations: {
-                        cell.leftConstraint.constant = -distance
-                        cell.rightConstraint.constant = distance
-                        cell.checkLabelLeftConstraint.constant = -distance
-                        cell.deleteLabelRightConstraint.constant = distance
-                        cell.layoutIfNeeded()
-                        
-                    }) { (ended) in
-                        
-                        // update the model
-                        tableView.performBatchUpdates({
-                            self.listOfItems.remove(at: index)
-                            tableView.deleteRows(at: [indexPath], with: .none)
-                            
-                        }) { (done) in
-                            self.tableView.reloadData()
-                          
-                        }
-                    }
+                    self.deleteCell(index, indexPath: indexPath, cell: cell)
                     
                 }else{
-                    //else just update the model
-                    self.listOfItems[index].name = cell.textField.text!
-                    self.tableView.reloadData()
+                    self.updateCell(index, cell: cell)
                     
                 }
             }
@@ -464,8 +485,12 @@ class ViewController: UIViewController {
             4. make the new cell's text field the fiest responder
                (this triggers the whole editing procedure)
          */
-        
-        listOfItems.append(TodoItem(name: "", done: false))
+        let moc = CoreDataStack.regularStore().moc
+        let item = ItemRepo.makeIn(moc: moc!)!
+        item.title = ""
+        item.done = false
+        print("Add new item")
+        listOfItems.append(item)
         tableView.contentOffset.y = tableView.contentOffset.y + tableView.rowHeight
         tableView.reloadData()
        
@@ -866,6 +891,7 @@ class ViewController: UIViewController {
         }
         let initialIndex = rowNumberToIndex(from: i.row)
         let endIndex = rowNumberToIndex(from: j.row)
+        print("Swap")
         listOfItems.swapAt(initialIndex, endIndex)
         tableView.endUpdates()
        
@@ -880,6 +906,9 @@ class ViewController: UIViewController {
      */
     
     private func animateSnapshotToFinalFrame(_ frame:CGRect) {
+
+        print("Animate")
+//        listOfItems.forEach { print($0.title) }
 
         let initialIndex = rowNumberToIndex(from: Drag.currentIndexPath!.row)
         var isChanged = false
@@ -959,12 +988,15 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
+//        print("get cell at ")
+//        listOfItems.forEach { print($0.title) }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell") as! TodoCell
         let todoItem = orderedListOfItems[indexPath.row]
 
         cell.resetCell()
         cell.delegate = self
-        cell.setText(todoItem.name)
+        cell.setText(todoItem.title ?? "")
         let cellColor = todoItem.done ?  #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) : getColor(for: indexPath.row)
 //        if isAnimating{
 //            cellColor = .blue
@@ -980,7 +1012,7 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
             cell.textField.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
             
             // make the text  strikethrough
-            let attributedString: NSMutableAttributedString =  NSMutableAttributedString(string: todoItem.name)
+            let attributedString: NSMutableAttributedString =  NSMutableAttributedString(string: todoItem.title!)
             let font = UIFont(name: "Helvetica", size: 17.0)
             attributedString.addAttribute(NSAttributedString.Key.font, value: font!, range: NSMakeRange(0, attributedString.length))
             attributedString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributedString.length))
@@ -1156,6 +1188,9 @@ extension ViewController:TodoCellDelegate{
     
     
     func todoCellWillModify(cell: TodoCell) {
+        print("cell will modify")
+//        listOfItems.forEach { print($0.title) }
+        
         /*
              Will do the following:
              1. Block other interactions
@@ -1262,13 +1297,19 @@ extension ViewController:TodoCellDelegate{
     // Only this one is needed to delete the cell (update the model/controller)
     // rest (animation) is handled by the view
     func todoCellWasSetToDeleted(cell: TodoCell) {
-        
+        print("to delete")
         if let indexPath = tableView.indexPath(for: cell){
             let index = rowNumberToIndex(from: indexPath.row)
             tableView.performBatchUpdates({
                 cell.delegate = nil
+                print("Delete item")
+                let victim = self.listOfItems[index]
+                self.moc.delete(victim)
+                try! self.moc.save()
+                
                 listOfItems.remove(at: index)
                 tableView.deleteRows(at: [indexPath], with: .left)
+                
             }) { (finished) in
                 self.tableView.reloadData()
             }
@@ -1292,6 +1333,8 @@ extension ViewController:TodoCellDelegate{
     
     
     func todoCellWasSetToDone(cell: TodoCell) {
+        print("Done")
+//        listOfItems.forEach { print($0.title) }
         /*
             View has detected that the cell was set to done (or reset to not done)
             it animated the cell accordingly and informed the delegate (controller)
@@ -1374,10 +1417,12 @@ extension ViewController:TodoCellDelegate{
 
                     tableView?.beginUpdates()
                     // remove the chosen cell
+                    print("Remove item.....")
                     self.listOfItems.remove(at: sourceIndex)
                     tableView?.deleteRows(at: [sourceIndexPath], with: .none)
                     // create a dummy item at destination index (will act as placeholder while animation lasts)
-                    let dummyTodoItemAtDestination = TodoItem(name: "", done: true)
+                    let moc = CoreDataStack.regularStore().moc
+                    let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: moc!)!
                     self.listOfItems.insert(dummyTodoItemAtDestination, at: destinationIndex)
                     tableView?.insertRows(at: [destinationIndexPath], with: .middle)
                     tableView?.endUpdates()
@@ -1386,6 +1431,7 @@ extension ViewController:TodoCellDelegate{
 
                     self.tableView.beginUpdates()
                     // swap the dummyItem with the selected item
+                    print("Remove item 2.....")
                     self.listOfItems.remove(at: destinationIndex)
                     self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
                     self.listOfItems.insert(originalTodoItem, at: destinationIndex)

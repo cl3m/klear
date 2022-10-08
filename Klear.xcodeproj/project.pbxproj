@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		974212C128EF697200FA3E37 /* DataRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C028EF697200FA3E37 /* DataRepo.swift */; };
-		974212C328EF6C6900FA3E37 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C228EF6C6900FA3E37 /* DataController.swift */; };
 		974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C428EF6FFD00FA3E37 /* ItemRepo.swift */; };
 		974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C628EF73BF00FA3E37 /* CoreDataStack.swift */; };
 		974212CD28F0E3B500FA3E37 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */; };
@@ -61,8 +59,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		974212C028EF697200FA3E37 /* DataRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRepo.swift; sourceTree = "<group>"; };
-		974212C228EF6C6900FA3E37 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		974212C428EF6FFD00FA3E37 /* ItemRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRepo.swift; sourceTree = "<group>"; };
 		974212C628EF73BF00FA3E37 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		974212C828F092C400FA3E37 /* Klear.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Klear.entitlements; sourceTree = "<group>"; };
@@ -169,8 +165,6 @@
 				BD14C93D24A5017E00209708 /* Main.storyboard */,
 				BD14C92424A5002900209708 /* Assets.xcassets */,
 				BD14C92624A5002900209708 /* LaunchScreen.storyboard */,
-				974212C028EF697200FA3E37 /* DataRepo.swift */,
-				974212C228EF6C6900FA3E37 /* DataController.swift */,
 				974212C628EF73BF00FA3E37 /* CoreDataStack.swift */,
 				974212C428EF6FFD00FA3E37 /* ItemRepo.swift */,
 			);
@@ -300,12 +294,10 @@
 				974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */,
 				BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */,
 				974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */,
-				974212C328EF6C6900FA3E37 /* DataController.swift in Sources */,
 				977887FF28EA2FD400C92F0A /* Model.xcdatamodeld in Sources */,
 				BD14C93624A5012B00209708 /* DummyCell.swift in Sources */,
 				BD14C91E24A5002700209708 /* SceneDelegate.swift in Sources */,
 				BD14C93C24A5012B00209708 /* TodoCell.swift in Sources */,
-				974212C128EF697200FA3E37 /* DataRepo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

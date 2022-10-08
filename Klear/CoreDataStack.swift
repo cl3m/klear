@@ -19,6 +19,7 @@ class CoreDataStack {
     }
     
     init(storeUrl:NSURL?) {
+        print("!!!!!!!! NEW MOC")
 
         let modelUrl = Bundle.main.url(forResource: "Model", withExtension: "momd")
         let model = NSManagedObjectModel(contentsOf: modelUrl!)

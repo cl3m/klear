@@ -8,9 +8,10 @@
 
 import Foundation
 
-struct TodoItem: Codable{
+struct TodoItem {
     var name: String
     var done: Bool
+    
 //    var isDragging: Bool
 //    var dummy = false
 }
