@@ -896,7 +896,7 @@ class ViewController: UIViewController {
 
         try! self.moc.save()
         tableView.endUpdates()
-
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
     
