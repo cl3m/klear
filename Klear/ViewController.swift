@@ -172,14 +172,7 @@ class ViewController: UIViewController {
     
     private func createTodoItems(){
         print("Load items...")
-        var items: [Item] = ItemRepo.allIn(moc: moc)
-        listOfItems = items
-//        items.forEach { (item) in
-//            let todoItem = TodoItem(name: item.title!, done: false)
-//            listOfItems.append(todoItem)
-//        }
-//        listOfItems.forEach { print($0.title) }
-        
+        listOfItems = ItemRepo.allIn(moc: moc)
     }
     
     
@@ -887,10 +880,23 @@ class ViewController: UIViewController {
         }
         let initialIndex = rowNumberToIndex(from: i.row)
         let endIndex = rowNumberToIndex(from: j.row)
-        print("Swap")
-        listOfItems.swapAt(initialIndex, endIndex)
+        print("Swap from " + String(initialIndex) + " to " + String(endIndex))
+        
+        var memo = listOfItems.map {
+            ($0.title, $0.done)
+        }
+        memo.swapAt(initialIndex, endIndex)
+
+        for (index, element) in memo.enumerated() {
+            print("Item \(index): \(element)")
+            let savedItem = listOfItems[index]
+            savedItem.title = element.0
+            savedItem.done = element.1
+        }
+
+        try! self.moc.save()
         tableView.endUpdates()
-       
+
     }
     
     
