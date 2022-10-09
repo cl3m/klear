@@ -352,17 +352,9 @@ class ViewController: UIViewController {
         transformLayer.removeFromSuperlayer()
     }
     
-
-
-    
-    
-
-    
     private func resetScrollPosition(to offset: CGFloat = 0){
         tableView.contentOffset.y = 0
     }
-    
-    
 
 //  MARK: - editing functions
     /*
@@ -409,6 +401,7 @@ class ViewController: UIViewController {
         //else just update the model
         print(">>> Update title from " + (self.listOfItems[index].title ?? "") + " to " +  cell.textField.text!)
         self.listOfItems[index].title = cell.textField.text!
+        try! self.moc.save()
         self.tableView.reloadData()
     }
     
@@ -445,6 +438,8 @@ class ViewController: UIViewController {
                     self.deleteCell(index, indexPath: indexPath, cell: cell)
                     
                 }else{
+                    
+                    
                     self.updateCell(index, cell: cell)
                     
                 }
@@ -487,8 +482,7 @@ class ViewController: UIViewController {
             4. make the new cell's text field the fiest responder
                (this triggers the whole editing procedure)
          */
-        let moc = CoreDataStack.regularStore().moc
-        let item = ItemRepo.makeIn(moc: moc!)!
+        let item = ItemRepo.makeIn(moc: moc)!
         item.title = ""
         item.done = false
         print("Add new item")
@@ -1285,15 +1279,17 @@ extension ViewController:TodoCellDelegate{
     }
     
     func todoCellWasModified(cell: TodoCell) {
-        
-        
         updateCellAndReturnToPreviousState(cell: cell)
         print("Cell was modified " + cell.textField.text!)
         
-        let cdStack = CoreDataStack.regularStore()
-        ItemRepo.makeIn(moc: cdStack.moc!)?.title = cell.textField.text!
-        try! cdStack.moc!.save()
-        WidgetCenter.shared.reloadAllTimelines()
+        if let indexPath = tableView.indexPath(for: cell){
+            let index = rowNumberToIndex(from: indexPath.row)
+            
+            let item = listOfItems[index]
+            item.title = cell.textField.text!
+            try! moc.save()
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
     
     // Only this one is needed to delete the cell (update the model/controller)
@@ -1424,8 +1420,8 @@ extension ViewController:TodoCellDelegate{
                     self.listOfItems.remove(at: sourceIndex)
                     tableView?.deleteRows(at: [sourceIndexPath], with: .none)
                     // create a dummy item at destination index (will act as placeholder while animation lasts)
-                    let moc = CoreDataStack.regularStore().moc
-                    let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: moc!)!
+                    
+                    let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: self.moc)!
                     self.listOfItems.insert(dummyTodoItemAtDestination, at: destinationIndex)
                     tableView?.insertRows(at: [destinationIndexPath], with: .middle)
                     tableView?.endUpdates()

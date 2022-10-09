@@ -16,6 +16,7 @@ class ItemRepo: NSManagedObject {
 
 
     class func makeIn(moc: NSManagedObjectContext) -> Item? {
+        print("Make new item")
         let newObject = NSEntityDescription.insertNewObject(forEntityName: "Item", into:moc) as! Item
         return newObject
     }
