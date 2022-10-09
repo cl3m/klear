@@ -1357,7 +1357,7 @@ extension ViewController:TodoCellDelegate{
              listOfItems[sourceIndex].done = !listOfItems[sourceIndex].done
             // 4. preserve the values of the cell (as a TodoItem) and create the animatedCell
             let originalTodoItem = listOfItems[sourceIndex]
-
+            try! self.moc.save()
             
             // 4. Animation
             //    no animation if source == destination
