@@ -9,20 +9,9 @@
 import UIKit
 
 class DummyCell: UIView {
-
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
-    
     @IBOutlet var contentView: UIView!
-    
     @IBOutlet var textField: UITextField!
     
-   
     override init(frame:CGRect){
         super.init(frame: frame)
         setupView()
@@ -33,24 +22,12 @@ class DummyCell: UIView {
     }
     
     func setupView(){
-
         Bundle.main.loadNibNamed("DummyCell", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
-//        contentView.translatesAutoresizingMaskIntoConstraints = false
-//        textcolor (of textField) is not animatable, so we'll have to use
-//        textLayer = CATextLayer(layer: textField.layer)
-//        textLayer.frame = textField.frame
-//        textLayer.string = "hello"
-//        textLayer.foregroundColor = UIColor.white.cgColor
-//
-//        self.layer.addSublayer(textLayer)
-        
     }
-    
-    
-    func setBackground(color: UIColor){
         
+    func setBackground(color: UIColor){        
         self.textField.backgroundColor = color
         self.contentView.backgroundColor = color
     }

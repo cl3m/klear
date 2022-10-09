@@ -16,16 +16,12 @@ protocol TodoCellDelegate: UIViewController {
     func todoCellPassedTheDoneThreshold(cell: TodoCell)
 }
 
-
 class TodoCell: UITableViewCell, UITextFieldDelegate  {
-    
     //MARK: - to interact with controller
-    
     var isAlreadyDone: Bool = false
     weak var delegate: TodoCellDelegate?
     
     //    MARK: - private properties
-    
     private let bounceFactor = 0.1
     private let labelBaseAlpha:CGFloat = 0.1
     private let panThreshold: CGFloat = 60.0
@@ -40,15 +36,10 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         }
     }
     
-    
-    
     private let panRatio = 0.5 //used to add resistance while panning
     private var initialBackgroundColor: UIColor? = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-    //    TODO: - maybe change the isDone and isAlreadyDone properties (it is confusing)
     private var isDone = false
     private var isDeleted = false
-    
-    
     
     //   MARK: - gesture recognizers
     private var panGestureRecoginer: UIPanGestureRecognizer?
@@ -77,13 +68,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
     @IBOutlet var deleteLabel: UILabel!
     @IBOutlet var textField: UITextField!
     
-
-    
-    //  because the cell has different components (text field)
-    //    use the getter/setter to treat background color uniformly
-
     func setBackground(color: UIColor){
-        
         self.textField.backgroundColor = color
         self.slidingView.backgroundColor = color
     }
@@ -92,11 +77,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         return slidingView.backgroundColor ?? UIColor()
     }
     
-    
-
-    
     override func awakeFromNib() {
-        
         super.awakeFromNib()
         
        //block textfield editing. will use gesture recognizer instead.
@@ -111,22 +92,18 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
             self.contentView.addGestureRecognizer(panGestureRecoginer!)
         }
         
-
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(handleTap))
         tapGestureRecognizer?.delegate = self
-//        tapGestureRecognizer?.delaysTouchesBegan = true
         if tapGestureRecognizer != nil{
             self.addGestureRecognizer(tapGestureRecognizer!)
         }
         initialBackgroundColor = getBackGroundColor()
     }
     
-
     func setText(_ text:String){
         textField.text = text
     }
     
-
     //    MARK: - TextField delegate methods
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // return the control if user taps the return key
@@ -139,45 +116,29 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         textField.isUserInteractionEnabled = false
         delegate?.todoCellWasModified(cell: self) // used to inform the controller that text editing was done
         TodoCell.isTextFieldEditing = false
-        print("End editing " + textField.text!)
     }
     
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        print("Begin edit cell")
         TodoCell.isTextFieldEditing = true
         delegate?.todoCellWillModify(cell: self) // used to inform the controller that text editing is about to begin
-        
-
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
         self.resetCell()
     }
-    
-    
   
     //    MARK: - gesture recognizer delegate methods
-    
-
-    
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        
         // don't alllow gesture to begin if any cell is already in panning or editing state
         if TodoCell.isTextFieldEditing  || TodoCell.isPanning {
             return false
         }
         
-        
         if gestureRecognizer == panGestureRecoginer{
             // only allow pan if the panning is (mainly) in the x-axis (i.e horizontaly)
-            
             let velocity = panGestureRecoginer!.velocity(in: superview)
             return ( abs(velocity.x) > abs(velocity.y))
-            
         }else{
             return true
         }
@@ -199,19 +160,12 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         return false
     }
     
-    
-
-    
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-
         return !TodoCell.isPanning && !TodoCell.isTextFieldEditing
     }
     
-    
 //    MARK: - gesture recognizers actions
-    
     @objc func panTheCell(recognizer: UIPanGestureRecognizer){
-        
         
         // TODO: - normally the following shouldn't be necessary, however if it is missing 2 cells can be swiped at the same time
         if TodoCell.isPanning, !self.isPanning{
@@ -226,10 +180,8 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         
         delta = currentPoint.x - panStartPoint.x
         
-        
         switch recognizer.state {
         case .began:
-
             // set panning to true (to block other interactions)
             isPanning = true
             // mark the initial pan point.
@@ -319,9 +271,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
 
                     //                   5. set isDone to true
                     isDone = true
-                    
                 }
-                
             }else //           2. left (delta < 0) - revealing the  delete action
             {
                 //                reset the left constraint
@@ -332,29 +282,21 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
                 leftConstraint.constant =  initialLeftConstraint + delta
                 self.slidingView.layoutIfNeeded()
                 
-                
-                
                 if -delta < panThreshold{
-                    
                     // 1. reset isDeleted
                     isDeleted = false
                     // 2. set the alpha of the delete label
                     let alpha = labelBaseAlpha + ((1-labelBaseAlpha) * slidePercentageUntilThreshold)
                     deleteLabel.textColor = deleteLabel.textColor.withAlphaComponent(alpha)
                 }else{
-                    
                     // 1. move along the delete label
                     deleteLabelRightConstraint.constant = initialRightContsraintForDeleteLabel + (-delta - panThreshold)
                     deleteLabel.layoutIfNeeded()
                     //2. set isDeleted to true
                     isDeleted = true
                 }
- 
             }
-            
-            
         case .ended:
-
             // 1.  set panning to false (to unblock other interactions)
             isPanning = false
             // 2. reset position
@@ -363,42 +305,28 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
 
             if delta > panThreshold {
                 isAlreadyDone = !isAlreadyDone
-                
             }else{ //if not reset the stikethrough and color
                 textField.attributedText = initialAtrributedString
-               
             }
-    
         case .cancelled:
-            
             // set panning to false (to unblock other interactions)
             isPanning = false
             TodoCell.isPanning = false
             isDone = false
             isDeleted = false
-//        case .possible:
-//            print ("possible")
-//            return
         default:
             isPanning = false
             TodoCell.isPanning = false
-            print("something else happened while recognizing pan")
         }
     }
-    
 
 //    this is used to trigger textField editing
     @objc func handleTap(sender: UITapGestureRecognizer) {
-        print("Tapped cell")
         switch sender.state {
         case .ended:
-            print("Tap ended")
-
 //            check of the textField is part of the active view hierarchy
 //            (otherwise canBecomeFirstResponder has undefined results)
             if textField.window != nil && !isAlreadyDone{
-                print("Can become responder")
-
 //                if textField.canBecomeFirstResponder{
                     print("Cell in edit mode")
                     textField.becomeFirstResponder()
@@ -406,17 +334,13 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
                     TodoCell.isTextFieldEditing = true
 //                }
             }
-
         default:
             return
         }
     }
     
-    
-    
-    
 // MARK: - helper functions
-    
+
 //    used by viewController when dequeing a cell to reset it initial position
 //    not sure if it is actually needed
     func resetConstraints(){
@@ -425,11 +349,9 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
         checkLabelLeftConstraint.constant = 0
         deleteLabelRightConstraint.constant = 0
         self.layoutIfNeeded()
-    
     }
     
     func resetCell(){
-
         isDone = false
         isAlreadyDone = false
         isDeleted = false
@@ -438,7 +360,6 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
     }
 
     private func resetPosition(fromDelta delta:CGFloat = 0.0){
-
         let bounce = Double(delta) * bounceFactor
         if self.isDeleted{
              let distance = 1.5 * self.contentView.frame.size.width
@@ -449,46 +370,20 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
                 self.checkLabelLeftConstraint.constant = -distance
                 self.deleteLabelRightConstraint.constant = distance
                 self.layoutIfNeeded()
-                
             }) { (ended) in
                 //  inform the delegate
                 self.delegate?.todoCellWasSetToDeleted(cell: self)
                 self.isDeleted = false
                 TodoCell.isPanning = false
-                
             }
-           
         }else{
-            
 //            animate the cell back to the intial position
 //            TODO: - try with damping (may be more natural)
-            
-//            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
-//                self.leftConstraint.constant = self.initialLeftConstraint
-//                self.rightConstraint.constant = self.initialRightConstraint
-//                self.checkLabelLeftConstraint.constant = self.initialLeftConstraintForCheckLabel
-//                self.layoutIfNeeded()
-//            }) { (done) in
-//                TodoCell.isPanning = false
-//                self.deleteLabel.isHidden = false
-//
-//                if self.isDone{
-//                    // inform the delegate
-//                    self.delegate?.todoCellWasSetToDone(cell: self)
-//                    self.isDone = false
-//
-//                }else{
-//                    // reset the strikethrough
-//                    self.textField.attributedText = self.initialAtrributedString
-//                }
-//            }
-
             UIView.animate(withDuration: 0.2, animations: {
                 self.leftConstraint.constant = self.initialLeftConstraint - CGFloat(bounce)
                 self.rightConstraint.constant = self.initialRightConstraint + CGFloat(bounce)
                 self.checkLabelLeftConstraint.constant = self.initialLeftConstraintForCheckLabel + CGFloat(bounce)
                 self.layoutIfNeeded()
-                
             })
             // temporarily hide the delete label to avoid being showed due to a big bounce
             deleteLabel.isHidden = true
@@ -499,7 +394,6 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
                     self.rightConstraint.constant = self.initialRightConstraint
                     self.checkLabelLeftConstraint.constant = self.initialLeftConstraintForCheckLabel
                     self.layoutIfNeeded()
-                    
             }) { (done) in
                 TodoCell.isPanning = false
                 self.deleteLabel.isHidden = false
@@ -508,7 +402,6 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
                     // inform the delegate
                     self.delegate?.todoCellWasSetToDone(cell: self)
                     self.isDone = false
-
                 }else{
                     // reset the strikethrough
                     self.textField.attributedText = self.initialAtrributedString
@@ -516,18 +409,11 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
             }
         }
     }
-   
 }
-
-
 
 extension UITextField{
 //    not sure if this is the correct way to do it.
     override open var canBecomeFirstResponder: Bool{
         return true
-
     }
 }
-
-
-

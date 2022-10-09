@@ -81,17 +81,9 @@ class ViewController: UIViewController {
         static var currentPosition:CGPoint? = nil
 //        static var isPaused = true
         static var direction:Direction = .up
-
-
-        
-
-        
     }
     
-
-    
     private var draggingCellSnapshot: UIView?
-    
     private var initialCellToBeDragged = UITableViewCell()
 
     
@@ -101,11 +93,6 @@ class ViewController: UIViewController {
 //    threshold = row height
     private var scrollOffsetWhenDraggingEnded:CGFloat = 0
     private var scrollOffsetThreshold: CGFloat = 0
-    
-//    keep the table dragging state
-//    TODO: - do we need this?
-//    private var inDraggingMode = false
-
     
 //  editing mode: - while a cell is selected and its text filed is edited.
 //  we are using this to block all other interactions
@@ -123,7 +110,6 @@ class ViewController: UIViewController {
     
 //    a placeholder for new cell (will be used in the "pull to create new item" action
     var newItemCellPlaceholder = UITableViewCell()
-//     var newItemCellPlaceholder = UILabel()
 
 // using this mode to check if we are in the process of adding a new item
     private var addingNewItemMode: Bool = false
@@ -131,8 +117,6 @@ class ViewController: UIViewController {
 // keep the offset position when entering mode, in order to return to the same position afterwards
     private var tableViewEditingOffset: CGFloat = 0.0
     
-    
-
 //   MARK: - gesture recognizers
 
     private var tapGestureRecognizer = UITapGestureRecognizer()
@@ -144,7 +128,6 @@ class ViewController: UIViewController {
 //    this holds the actual items
     private var listOfItems:[Item] = []
     
- 
     private var indexOfLastDoneItem:Int{
         get{
             if let index = listOfItems.lastIndex(where: {$0.done == true }){
@@ -175,7 +158,6 @@ class ViewController: UIViewController {
         listOfItems = ItemRepo.allIn(moc: moc)
     }
     
-    
     // model and tableView have opposite orders
     // new item is appended in the model array , but shown first in the tableView
     private var orderedListOfItems:[Item] {
@@ -196,17 +178,7 @@ class ViewController: UIViewController {
         return rowNumberToIndex(from: row)
     }
     
-    private func logMessage(_ message: String,
-                    functionName: String = #function) {
-        
-        print("\(functionName): \(message)")
-    }
-    
-    
-    
 //    MARK: - helper UI variables and functions
-    
-    
     //    get the frame for indexPath
     //    !!CHECK!! not sure if this is needed
     
@@ -216,9 +188,7 @@ class ViewController: UIViewController {
         let width = tableView.frame.width
         let y = rowHeight * CGFloat(row)
         return CGRect(x: 0, y: y, width: width, height: rowHeight)
-        
     }
-    
     
     private var getNextColor: UIColor{
         get{
@@ -237,18 +207,15 @@ class ViewController: UIViewController {
         tableView.isScrollEnabled = true
         self.tableView.dragInteractionEnabled = true
         longGestureRecognizer.isEnabled = true
-        
     }
     
     private func getColorForPlaceHolderTop() -> UIColor{
         if let firstVisibleCell = tableView.visibleCells.first as? TodoCell{
             let bgColor = firstVisibleCell.getBackGroundColor()
             return bgColor
-            
         }else{
             return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         }
-  
     }
     
 
@@ -267,7 +234,6 @@ class ViewController: UIViewController {
         // setup the scrollOffset (user dragging to create a new item) threshold
         scrollOffsetThreshold = -tableView.rowHeight
         
-        
         // Disable selection (no use for selecting rows)
         tableView.allowsSelection = false
         tableView.allowsSelectionDuringEditing = false
@@ -275,15 +241,12 @@ class ViewController: UIViewController {
         tableViewInitialTopConstraint = tableViewTopConstraint.constant
 
         // initialize the list of items (and the table)
-//        createDummyTodoItems(count: 4)
         createTodoItems()
         // this is used to create a dummy cell at the top of the table while adding a new item
         newItemCellPlaceholder = UITableViewCell(style: .default, reuseIdentifier: "TodoCell")
         
         resetScrollPosition()
-        
     }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -293,7 +256,6 @@ class ViewController: UIViewController {
 
         // setup the newItemPlaceHolder
         addPlaceHolderForNewItem()
-
 
         // initial setup for gesture recognizers
 
@@ -309,18 +271,11 @@ class ViewController: UIViewController {
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(handleTap))
         tapGestureRecognizer.delegate = self
         tapGestureRecognizer.delaysTouchesBegan = true
-        
-//        pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch))
-//        pinchGestureRecognizer.delegate = self
-//        view.addGestureRecognizer(pinchGestureRecognizer)
-        
 
         // initial setup for scrolling zones
         defaultScrollingLimit = tableView.rowHeight * 2.0
         resetScrollZones()
-
     }
-    
     
     private func addPlaceHolderForNewItem(){
         var perspective = CATransform3DIdentity
@@ -332,8 +287,6 @@ class ViewController: UIViewController {
         let width = tableView.bounds.width
         let height = tableView.rowHeight
         newItemCellPlaceholder.frame = CGRect(x:  -width / 2.0 , y: -height , width: width, height: height)
-        //        !!CHECK!! maybe we don't need an anchor point for transform layer as well
-        //        transformLayer.anchorPoint = anchorPoint
         transformLayer.position = CGPoint(x: width/2.0, y: 0)
         transformLayer.addSublayer(newItemCellPlaceholder.layer)
         tableView.layer.addSublayer(transformLayer)
@@ -358,9 +311,7 @@ class ViewController: UIViewController {
          4. TodoCellWasModified calls following method (updateCellAndReturnToPreviousState)
     */
 
-    
     fileprivate func deleteCell(_ index: Int, indexPath: IndexPath, cell: TodoCell) {
-        print("Delete")
         let distance = 1.5 * tableView.frame.width
         
         UIView.animate(withDuration: 0.2, animations: {
@@ -369,9 +320,7 @@ class ViewController: UIViewController {
             cell.checkLabelLeftConstraint.constant = -distance
             cell.deleteLabelRightConstraint.constant = distance
             cell.layoutIfNeeded()
-            
         }) { (ended) in
-            
             // update the model
             self.tableView.performBatchUpdates({
                 print("Remove item")
@@ -381,11 +330,8 @@ class ViewController: UIViewController {
                 WidgetCenter.shared.reloadAllTimelines()
                 self.listOfItems.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
-                
-                
             }) { (done) in
                 self.tableView.reloadData()
-                
             }
         }
     }
@@ -399,16 +345,12 @@ class ViewController: UIViewController {
     }
     
     private func updateCellAndReturnToPreviousState(cell: TodoCell){
-        
         // disable scrolling of table view until we've finished with animations
         tableView.isScrollEnabled = false
 
         // if all text was deleted, mark the cell for deletion
         let cellIsToBeDeleted =  cell.textField.text! == "" ? true  : false
 
-        print("to prev state")
-//        listOfItems.forEach { print($0.title) }
-        
         // scroll back to the position before editing started
         // make the cells opaque
         UIView.animate(withDuration: 0.25, delay:  0.0 ,  options: .curveEaseOut, animations: {
@@ -417,9 +359,7 @@ class ViewController: UIViewController {
             for visibleCell in visibleCells{
                 visibleCell.alpha = 1.0
             }
-            
         }) {(ended) in
-            print(".")
             //reset the content inset
             self.tableView.contentInset.bottom = self.tableView.rowHeight
             self.editingCell = nil
@@ -429,29 +369,17 @@ class ViewController: UIViewController {
                 let index = self.rowNumberToIndex(from: indexPath.row)
                 if cellIsToBeDeleted{
                     self.deleteCell(index, indexPath: indexPath, cell: cell)
-                    
                 }else{
-                    
-                    
                     self.updateCell(index, cell: cell)
-                    
                 }
             }
-            
 
             // remove the tap recognizer
             self.view.removeGestureRecognizer(self.tapGestureRecognizer)
             self.editingMode = false
             self.addingNewItemMode = false // if this was triggered by the adding new item procedure, exit
-
         }
-  
     }
-    
-    
-    
-
-    
     
 //    MARK: - add new item functions
     
@@ -464,8 +392,7 @@ class ViewController: UIViewController {
          4. When editing ends, textField resings first responder and its delegate calls todoCellWasModified (TodoCell delegate method in VC)
          5. TodoCellWasModified calls following method (updateCellAndReturnToPreviousState)
     */
-    
-    
+        
     private func addNewItem(at indexPath:IndexPath){
         /*
             1. add a new blank item at the array
@@ -484,21 +411,9 @@ class ViewController: UIViewController {
         tableView.reloadData()
        
         if let newCell =  tableView.cellForRow(at: indexPath) as? TodoCell{
-
             newCell.textField.becomeFirstResponder()
-           
         }
-
-        
     }
-    
-    
-    
-    
-
-    
-
-    
 
 //MARK: - delete following only for debug purposes
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -506,19 +421,13 @@ class ViewController: UIViewController {
         if gestureRecognizer == tapGestureRecognizer{
             if editingMode{
                 return true
-                
             }else{
                 return false
-                
             }
            
         }else if gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self){
-
-            TodoCell.shoudlBlockTextField = true
-
-
+          TodoCell.shoudlBlockTextField = true
         }else{
-
              TodoCell.shoudlBlockTextField = false
         }
 
@@ -536,18 +445,15 @@ class ViewController: UIViewController {
             break
         default:
             break
-            
         }
     }
     
     @objc func handleTap(sender: UITapGestureRecognizer) {
         if sender.state == .ended, editingMode == true{
             view.endEditing(false)
-
         }
     }
 
-    
     // updates the BG color for each of the visible cells
     private func updateColors(){
         let visibleCells = tableView.visibleCells
@@ -559,19 +465,14 @@ class ViewController: UIViewController {
                 cell.setBackground(color:bgColor)
                 i += 1
             }
-            
         }
-        
     }
 
-    
     private func getColor(for index:Int, in colorCount:Int = 0) -> UIColor{
         var color:UIColor
         if countOfNotDoneItems < colors.count {
             color = colors[index]
             return color
-            
-
         }else{
             let startColor = colors.first!
             let endColor = colors.last!
@@ -579,16 +480,9 @@ class ViewController: UIViewController {
             percentage = colorCount == 0 ? CGFloat(index)/CGFloat(countOfNotDoneItems) : CGFloat(index)/CGFloat(colorCount)
             let color = UIColor.interpolate(from: startColor, to: endColor, with: percentage)
             return color
-
         }
-
-
     }
-    
 
-    
-
-    
     private func findNextDonePosition() -> Int{
         if let index = orderedListOfItems.firstIndex(where: { $0.done == true }) {
             return index
@@ -627,14 +521,9 @@ class ViewController: UIViewController {
             invalidate the display link
      
         Drag struct keeps info about the state of the drag
-
-     
      */
     
-    
-
     @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
-        
         // get the location of the touch
         
         let locationInTableView = sender.location(in: tableView) // used for calculation of index path
@@ -649,13 +538,11 @@ class ViewController: UIViewController {
             if blurView.frame.contains(locationInSuperView) {
                 sender.state = .cancelled
                 return
-                
             }
             
             //save the initial position
             Drag.currentPosition = locationInSuperView
-            // TODO: do we actually need that?
-
+        
             // get the  indexPath, if possible - else exit (no cell to drag)
             
             guard let indexPath = tableView.indexPathForRow(at: locationInTableView) else {return}
@@ -684,19 +571,15 @@ class ViewController: UIViewController {
                 snapshot.layer.shadowRadius = 5.0
                 snapshot.layer.shadowOpacity = 0.4
                 draggingCellSnapshot = snapshot
-
                 
                 //now add it to view
                 view.addSubview(draggingCellSnapshot!)
                 
                 // and create the magnification animation
-                
                 UIView.animate(withDuration: 0.25) { [weak self] in
                     if self?.draggingCellSnapshot != nil{
                         self?.draggingCellSnapshot!.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-                        
                     }
-                    
                 }
 
                 // hide the initialCell, movement will be done for the snapshot
@@ -704,18 +587,12 @@ class ViewController: UIViewController {
                 // intialize the displayLink
                 Drag.displayLink = CADisplayLink(target: self, selector:#selector(scrollTableAndCell))
                 Drag.displayLink?.add(to: .main, forMode: .default)
-                
-                
-                
             }
-            
-            
             
         case .changed:
             break
             
         case .ended:
-            
             resetScrollZones() //for the next dragging sesssion
             // reset display link - don't want to call that anymore
             Drag.displayLink?.invalidate()
@@ -725,10 +602,7 @@ class ViewController: UIViewController {
             // following options:
             // 1. the current position corresponds to a valid indexPath
             //        ok, unless we scrolled with no swapping (see scrollTableAndCell) and dropped in outside the tableView
-
-            
             if let indexPath = Drag.currentIndexPath{
-
                 if let destinationCell = tableView.cellForRow(at: indexPath){
 
                     // translate the destinationFrame to superview
@@ -737,7 +611,6 @@ class ViewController: UIViewController {
                 }
 
                 //        should be out of bounds, get the indexPath of the draggingCell
-                
             }else{
                 //                if indexPath is nil there 2 chances:
                 //                1. dragginCellSnapshot is beyond the list of items so, it should get the final indexpath
@@ -747,38 +620,25 @@ class ViewController: UIViewController {
                         if  let destinationCell = tableView.cellForRow(at: draggingIndexPath){
                             let destinationFrame = tableView.convert(destinationCell.frame, to: view)
                             animateSnapshotToFinalFrame(destinationFrame)
-
                         }
-   
                     }
-                    
                 }
-                
-  
             }
 
             TodoCell.shoudlBlockTextField = false
-  
-            
         case .cancelled:
             Drag.displayLink?.invalidate()
             Drag.displayLink = nil
             TodoCell.shoudlBlockTextField = false
-
             //            - TODO: move the initial cell to its original position
-            
-
         default:
             break
         }
     }
 
-    
-    
     private func resetScrollZones(){
         topScrollZoneLimit = defaultScrollingLimit
         bottomScrollZoneLimit = defaultScrollingLimit
-        
     }
     /*
       scrollTableAndCell is called periodically (via displayLink) while dragging a cell (snapshot)
@@ -797,7 +657,6 @@ class ViewController: UIViewController {
         update(snapshot: draggingCellSnapshot, with: currentLocationInView)
         
         var newOffset = Double(tableView.contentOffset.y)
-        //var offsetDiff = 0.0
         
         // get the current table view offset
         let currentOffsetY = Double(tableView.contentOffset.y)
@@ -817,37 +676,30 @@ class ViewController: UIViewController {
             }else{ // we are at the very top of the table (used to be able to swap the first cell)
                 adjustedLocation = CGPoint(x: Double(currentLocationInTableView.x), y: 0.0)
             }
-            
         }
         
         // get the current index path and swap if it is different than the previous known index path
         if let currentIndexPath = tableView.indexPathForRow(at: adjustedLocation){
-            
             if currentIndexPath != Drag.currentIndexPath{
                 swapCell(Drag.currentIndexPath!, currentIndexPath)
-                
             }
             // save the current indexPath
             Drag.currentIndexPath = currentIndexPath
         }
-
         
         // *****  scrolling part *****
         if let lastLocation = Drag.currentPosition,
             lastLocation != currentLocationInView
         {
-
             //  check if we are within scrollZones
             if topScrollZoneRect.contains(currentLocationInView){
                 // calculate the offset to scroll to top gradually
                 let diff = Double((topScrollZoneRect.maxY - currentLocationInView.y)/Drag.scrollingRate)
                 newOffset = currentOffsetY - diff
-  
             }else if bottomScrollZoneRect.contains(currentLocationInView){
                 // calculate the offset to scroll to bottom gradually
                 let diff = Double((currentLocationInView.y - bottomScrollZoneRect.minY)/Drag.scrollingRate)
                 newOffset = currentOffsetY + diff
-                
             }
         }
         
@@ -861,18 +713,15 @@ class ViewController: UIViewController {
         }
  
         tableView.setContentOffset(CGPoint(x: 0.0, y: newOffset), animated: false)
-        
     }
  
     private func swapCell(_ i:IndexPath, _ j:IndexPath){
-        
         /*
           swapCell is called by scrollTableAndCell when we change indexPath
           - will move row from source IndexPath -> destination IndexPath
           - hide the cell after swapping
           - swap the items at the array of items
          */
-        
         tableView.beginUpdates()
         tableView.moveRow(at: i, to: j)
         if let currentCell = tableView.cellForRow(at: i) as? TodoCell{
@@ -899,18 +748,12 @@ class ViewController: UIViewController {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
-    
     /*
       when dragging is done, animateSnapshotToFinalFrame is called
       to place the dragging cell to its resting positiond (with animation)
-      
-     
      */
-    
     private func animateSnapshotToFinalFrame(_ frame:CGRect) {
-
         print("Animate")
-//        listOfItems.forEach { print($0.title) }
 
         let initialIndex = rowNumberToIndex(from: Drag.currentIndexPath!.row)
         var isChanged = false
@@ -933,15 +776,11 @@ class ViewController: UIViewController {
                 }
             }
 
-        
         UIView.animate(withDuration: 0.25, animations: {
             self.draggingCellSnapshot?.transform = CGAffineTransform.identity
             self.draggingCellSnapshot?.frame = frame
             if isChanged{
-//                self.draggingCellSnapshot?.layer.opacity = 0
-            }
-            
-            
+        }
         }) { (ended) in
             self.tableView.contentInset.top = 0
             self.draggingCellSnapshot!.removeFromSuperview()
@@ -954,45 +793,24 @@ class ViewController: UIViewController {
             UIView.setAnimationsEnabled(true)
     //            reset the top contentInset
             self.tableView.contentInset.top = 0.0
-
-          
         }
-  
     }
         
     private func update(snapshot:UIView?, with location:CGPoint){
-        
         if snapshot != nil{
             snapshot!.center.x = location.x - Drag.cellOffsetFromCenter.x
             snapshot!.center.y = location.y - Drag.cellOffsetFromCenter.y
-    
         }
-  
     }
-
 }
 
 // MARK: - TableView delegate methods
-
 extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate{
-    
-
-   
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         return listOfItems.count
-        
     }
-    
 
-
-    
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-//        print("get cell at ")
-//        listOfItems.forEach { print($0.title) }
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell") as! TodoCell
         let todoItem = orderedListOfItems[indexPath.row]
 
@@ -1000,17 +818,11 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
         cell.delegate = self
         cell.setText(todoItem.title ?? "")
         let cellColor = todoItem.done ?  #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) : getColor(for: indexPath.row)
-//        if isAnimating{
-//            cellColor = .blue
-//        }
             
         cell.setBackground(color: cellColor)
-        //        !! CHECK !! not sure if this is needed
-        
 
         // set the text attributes accoringly if item is done or not
         if todoItem.done {
-            
             cell.textField.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
             
             // make the text  strikethrough
@@ -1022,22 +834,14 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
             cell.textField.attributedText = attributedString
             // we want to disable editing for items that are already done
             cell.textField.isEnabled = false
-            
         }else{
             cell.textField.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
             cell.textField.isEnabled = true
         }
-//        cell.isHidden = todoItem.isDragging
-
-
         cell.isAlreadyDone = todoItem.done
         return cell
- 
     }
     
-    
-
-
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
             return false
     }
@@ -1046,31 +850,16 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath == tableView.indexPathsForVisibleRows?.last{
             tableView.isScrollEnabled = true
-
         }
-       
     }
-    
-
-
 }
+
 //MARK: - ScrollView delegate methods
 //Will  use these to detect "pull to add" action
 extension ViewController: UIScrollViewDelegate{
-    
-    
-    
-    
-    
-    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         addPlaceHolderForNewItem()
-        //        inDraggingMode = true
-        
     }
-    
-    
-    
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         /*
@@ -1096,7 +885,6 @@ extension ViewController: UIScrollViewDelegate{
         if scrollOffset < 0{ //dragging
             
             // if we are in the midst of a drag & drop operation, exit
-            //            if Drag.isDraggingActive { return }
             placeHolderViewHeightConstraint.constant = 0.0
             let baseAlpha:CGFloat = 0.2
             let dragPercentage = abs(scrollOffset) < abs(scrollOffsetThreshold) ? scrollOffset/scrollOffsetThreshold : 1.0
@@ -1121,36 +909,23 @@ extension ViewController: UIScrollViewDelegate{
                 newItemCellPlaceholder.textLabel?.text = ""
                 removePlaceHolderForNewItem()
                 addNewItem(at: IndexPath(row: 0, section: 0))
-                
             }
-            
         }else if scrollOffset > 0{//normal scrolling
-            
             // grow placeholder' height while scrolling (up to the height of a row)
             placeHolderViewHeightConstraint.constant = scrollOffset < -scrollOffsetThreshold ? scrollOffset : tableView.rowHeight
             placeholderViewTop.backgroundColor = getColorForPlaceHolderTop()
-            
-            
-            
         }else{ // in intial position (not scrolled)
-            
             placeholderViewTop.backgroundColor = .black
         }
-        
     }
     
-    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        
         // used to decide if we are going to add a new item (passed the threshold),
         // or just cancel the procedure.
         scrollOffsetWhenDraggingEnded  = scrollView.contentOffset.y
-        
     }
 }
     
-
-
 public extension UIColor {
     /// The RGBA components associated with a `UIColor` instance.
     var components: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
@@ -1178,21 +953,7 @@ public extension UIColor {
 
 // MARK: - TodoCellDelegate Methods
 extension ViewController:TodoCellDelegate{
-    
-
-    
-    
-    
-
-    
-
-    
-    
-    
     func todoCellWillModify(cell: TodoCell) {
-        print("cell will modify")
-//        listOfItems.forEach { print($0.title) }
-        
         /*
              Will do the following:
              1. Block other interactions
@@ -1205,8 +966,6 @@ extension ViewController:TodoCellDelegate{
             // we don't want to keep track of the offset if in adding new item mode
             tableViewEditingOffset = addingNewItemMode ? 0 :  tableView.contentOffset.y
             isAnimating = true
-        }else{
-            logMessage("called again")
         }
         editingMode = true // block any gestures outside the textField
         editingCell = cell
@@ -1218,8 +977,6 @@ extension ViewController:TodoCellDelegate{
             self.tableView.isScrollEnabled = false
 
             // setup a shading view the 2* height of the visible tableView cell (we won't scroll past that)
-            
-
             shadingView.alpha = 0.2
             shadingView.backgroundColor = .black
             
@@ -1230,17 +987,12 @@ extension ViewController:TodoCellDelegate{
 
                 UIView.animate(withDuration: 0.3, animations: {
                     self.shadingView.alpha = 0.7
-                    
-                   
                 }) { (ended) in
                     self.shadingView.removeFromSuperview()
                      self.shadeAllOtherCellsExcept(cell: cell)
-                    
                 }
             }else{
-                
                 shadingView.frame = CGRect(origin: CGPoint(x: 0, y: tableView.contentOffset.y), size: CGSize(width: tableView.frame.width, height: tableView.frame.height * 2.0))
-                //            shadingView.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: tableView.frame.size)
 
                 tableView.addSubview(shadingView)
                 guard let viewOnTop = cell.snapshotView(afterScreenUpdates: false) else {return}
@@ -1248,7 +1000,6 @@ extension ViewController:TodoCellDelegate{
                 tableView.addSubview(viewOnTop)
 
                 // setup a huge content inset so we can scroll the selected cell to top in any case
-                
                 let contentInset = tableView.visibleSize.height - 60.0
                 tableView.contentInset.bottom = contentInset
                 
@@ -1260,27 +1011,18 @@ extension ViewController:TodoCellDelegate{
                 let newOffset = distanceToTop + currentOffset
                 view.layoutIfNeeded()
 
-
                 UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut ,animations: {
                     self.shadingView.alpha = 0.7
                     self.tableView.setContentOffset(CGPoint(x: 0.0, y: newOffset), animated: false)
-  
                 }) { (ended) in
-                    
                     self.isAnimating = false
                     viewOnTop.removeFromSuperview()
                     self.shadeAllOtherCellsExcept(cell: cell)
                     self.shadingView.removeFromSuperview()
-                
                 }
                 
                 CATransaction.commit()
-                
             }
-
-               
-                
-            
         }
     }
     
@@ -1290,7 +1032,6 @@ extension ViewController:TodoCellDelegate{
         
         if let indexPath = tableView.indexPath(for: cell){
             let index = rowNumberToIndex(from: indexPath.row)
-            
             let item = listOfItems[index]
             item.title = cell.textField.text!
             try! moc.save()
@@ -1306,7 +1047,6 @@ extension ViewController:TodoCellDelegate{
             let index = rowNumberToIndex(from: indexPath.row)
             tableView.performBatchUpdates({
                 cell.delegate = nil
-                print("Delete item")
                 let victim = self.listOfItems[index]
                 self.moc.delete(victim)
                 try! self.moc.save()
@@ -1314,32 +1054,24 @@ extension ViewController:TodoCellDelegate{
                 
                 listOfItems.remove(at: index)
                 tableView.deleteRows(at: [indexPath], with: .left)
-                
             }) { (finished) in
                 self.tableView.reloadData()
             }
         }
     }
     
-
     /*
         the view is responsible for the panning of the cell
         and deciding when the threshold is passed.
         following 2 delegate functions are used for:
           1. returning the color of the next not done cell (while panning is still ongoing)
           2. handle all other stuff when panning has finished
-     
      */
-    
     func todoCellPassedTheDoneThreshold(cell: TodoCell){
         cell.setBackground(color: getNextColor)
     }
     
-    
-    
     func todoCellWasSetToDone(cell: TodoCell) {
-        print("Done")
-//        listOfItems.forEach { print($0.title) }
         /*
             View has detected that the cell was set to done (or reset to not done)
             it animated the cell accordingly and informed the delegate (controller)
@@ -1389,23 +1121,18 @@ extension ViewController:TodoCellDelegate{
                             // destinationIndexPath is below the visible area
                             let last = visibileIndices.last!
                             destinationIndexPathForAnimation = IndexPath(row: last.row +  1, section: 0)
-                            
                         }else{
                             // destinationIndexPath is above the visible area
                             let first = visibileIndices.first!
                             destinationIndexPathForAnimation = IndexPath(row: first.row - 1, section: 0 )
                         }
                     }
-                    
                 }else{
                     destinationIndexPathForAnimation = destinationIndexPath
-                    
                 }
-
 
                 //let destinationFrame = frameForRow(at: destinationIndexPath)
                 let destinationFrame = frameForRow(at: destinationIndexPathForAnimation)
-
 
                 // group table update and dummy cell animation together (for animations to be in sync)
                 CATransaction.begin()
@@ -1417,7 +1144,6 @@ extension ViewController:TodoCellDelegate{
                         animatedCell.textField.backgroundColor = .black
                         animatedCell.contentView.backgroundColor = .black
                         animatedCell.textField.layer.opacity = 0.27 // textColor is not animatable so we will use  opacity to simulate the effect
-                        
                     }
 
                     tableView?.beginUpdates()
@@ -1433,7 +1159,6 @@ extension ViewController:TodoCellDelegate{
                     tableView?.endUpdates()
 
                 }) { (finished) in
-
                     self.tableView.beginUpdates()
                     // swap the dummyItem with the selected item
                     print("Remove item 2.....")
@@ -1449,23 +1174,11 @@ extension ViewController:TodoCellDelegate{
                     animatedCell.removeFromSuperview()
                     cell.removeFromSuperview()
                     self.view.layoutIfNeeded()
-                       
                 }
                 CATransaction.commit()
-    
             } else{ //source == destination (just update the model)
                 tableView.reloadData()
             }
-            
         }
- 
     }
-  
 }
-
-
-
-
-
-
-

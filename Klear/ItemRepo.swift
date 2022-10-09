@@ -10,11 +10,6 @@ import Foundation
 import CoreData
 
 class ItemRepo: NSManagedObject {
-    
-    @NSManaged var title: String
-    @NSManaged var done: Bool
-
-
     class func makeIn(moc: NSManagedObjectContext) -> Item? {
         print("Make new item")
         let newObject = NSEntityDescription.insertNewObject(forEntityName: "Item", into:moc) as! Item
@@ -24,16 +19,11 @@ class ItemRepo: NSManagedObject {
     class func allIn(moc: NSManagedObjectContext) -> [Item] {
         print("get all items")
         let request = NSFetchRequest<Item>(entityName: "Item")
-//        let request = Item.fetchRequest()
         
          do {
              return try moc.fetch(request)
          } catch {
              return []
          }
-    }
-    
-    override func awakeFromInsert() {
-        title = ""
     }
 }

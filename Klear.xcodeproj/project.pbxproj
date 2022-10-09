@@ -26,7 +26,6 @@
 		BD14C92524A5002900209708 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD14C92424A5002900209708 /* Assets.xcassets */; };
 		BD14C92824A5002900209708 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD14C92624A5002900209708 /* LaunchScreen.storyboard */; };
 		BD14C93624A5012B00209708 /* DummyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C92F24A5012A00209708 /* DummyCell.swift */; };
-		BD14C93724A5012B00209708 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C93024A5012A00209708 /* TodoItem.swift */; };
 		BD14C93824A5012B00209708 /* DummyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD14C93124A5012A00209708 /* DummyCell.xib */; };
 		BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C93224A5012A00209708 /* TableViewCell.swift */; };
 		BD14C93A24A5012B00209708 /* TodoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD14C93324A5012A00209708 /* TodoCell.xib */; };
@@ -79,7 +78,6 @@
 		BD14C92724A5002900209708 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BD14C92924A5002900209708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BD14C92F24A5012A00209708 /* DummyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyCell.swift; sourceTree = "<group>"; };
-		BD14C93024A5012A00209708 /* TodoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 		BD14C93124A5012A00209708 /* DummyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DummyCell.xib; sourceTree = "<group>"; };
 		BD14C93224A5012A00209708 /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		BD14C93324A5012A00209708 /* TodoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TodoCell.xib; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				BD14C93224A5012A00209708 /* TableViewCell.swift */,
 				BD14C93524A5012B00209708 /* TodoCell.swift */,
 				BD14C93324A5012A00209708 /* TodoCell.xib */,
-				BD14C93024A5012A00209708 /* TodoItem.swift */,
 				BD14C91F24A5002700209708 /* ViewController.swift */,
 				BD14C93D24A5017E00209708 /* Main.storyboard */,
 				BD14C92424A5002900209708 /* Assets.xcassets */,
@@ -288,7 +285,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				979054ED28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */,
-				BD14C93724A5012B00209708 /* TodoItem.swift in Sources */,
 				BD14C92024A5002700209708 /* ViewController.swift in Sources */,
 				BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */,
 				974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */,

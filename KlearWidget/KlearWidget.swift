@@ -64,9 +64,7 @@ struct KlearWidgetEntryView : View {
     }
     
     fileprivate func items() ->  [some View] {
-        print("Widget items = " + String(mainItems.count))
         let count = min(4, mainItems.count)
-        print("Show " + String(count))
         let displayItems = (count > 0) ? mainItems[0...count - 1] : []
         return displayItems.map { item(text: $0.title!) }
     }
@@ -89,8 +87,6 @@ struct KlearWidgetEntryView : View {
                 .padding(.top, 6)
             }
             .padding(.horizontal, 8.0)
-            
-            
         }
     }
 }
