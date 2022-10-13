@@ -38,20 +38,15 @@ class ViewController: UIViewController {
     private var bottomScrollZoneLimit: CGFloat = 0.0
     private var topScrollZoneLimit: CGFloat = 0.0
     private var topScrollZoneRect:CGRect{
-
         let differenceOfTop = tableView.frame.minY
         let rect = CGRect(x: 0, y: view.frame.minY , width: tableView.frame.width, height: topScrollZoneLimit + differenceOfTop)
-
         return rect
-        
     }
     
     private var bottomScrollZoneRect :CGRect{
         let differenceOfBottom = view.frame.maxY - tableView.frame.minY - tableView.frame.height
         let rect = CGRect(x: 0, y: view.frame.maxY - differenceOfBottom - bottomScrollZoneLimit , width: tableView.frame.width, height: bottomScrollZoneLimit + differenceOfBottom)
-
         return rect
-        
     }
     
     // will be used special handling in case there are not enough rows to cover the entire view
@@ -62,31 +57,10 @@ class ViewController: UIViewController {
             return false
         }
     }
-    
-    
-// MARK: - struct used to keep the states/properties of dragging cell
-    
-    private enum Direction{
-        case up
-        case down
-    }
-    
-    private struct Drag{
-
-        static var cellOffsetFromCenter = CGPoint()
-        static var currentIndexPath: IndexPath? = nil
-        static var displayLink:CADisplayLink?
-        static let scrollingRate:CGFloat = 12.0
-        static var diffCurrentAndCalculatedOffset:CGFloat = 0.0
-        static var currentPosition:CGPoint? = nil
-//        static var isPaused = true
-        static var direction:Direction = .up
-    }
-    
+   
     private var draggingCellSnapshot: UIView?
     private var initialCellToBeDragged = UITableViewCell()
 
-    
 //  MARK: - states
     
 //    will use these to see if we passed the threshold and decide if we will add a new item
@@ -953,6 +927,7 @@ public extension UIColor {
 
 // MARK: - TodoCellDelegate Methods
 extension ViewController:TodoCellDelegate{
+ 
     func todoCellWillModify(cell: TodoCell) {
         /*
              Will do the following:
@@ -982,49 +957,58 @@ extension ViewController:TodoCellDelegate{
             
             // setup the snapshot cell (going to simulate the editable cell)
             if addingNewItemMode{
-                shadingView.frame = CGRect(origin: CGPoint(x: 0, y: tableView.rowHeight), size: CGSize(width: tableView.frame.width, height: tableView.frame.height))
-                tableView.addSubview(shadingView)
-
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.shadingView.alpha = 0.7
-                }) { (ended) in
-                    self.shadingView.removeFromSuperview()
-                     self.shadeAllOtherCellsExcept(cell: cell)
-                }
+                modifyNewCell(cell)
             }else{
                 shadingView.frame = CGRect(origin: CGPoint(x: 0, y: tableView.contentOffset.y), size: CGSize(width: tableView.frame.width, height: tableView.frame.height * 2.0))
-
                 tableView.addSubview(shadingView)
                 guard let viewOnTop = cell.snapshotView(afterScreenUpdates: false) else {return}
-                viewOnTop.frame = cell.frame
-                tableView.addSubview(viewOnTop)
-
-                // setup a huge content inset so we can scroll the selected cell to top in any case
-                let contentInset = tableView.visibleSize.height - 60.0
-                tableView.contentInset.bottom = contentInset
-                
-                CATransaction.begin()
-//                get the absolute position of the cell and calculate
-//                the distance to the the top of the table
-                let distanceToTop = tableView.convert(cell.frame, to: view).minY - tableView.rowHeight
-                let currentOffset = tableView.contentOffset.y
-                let newOffset = distanceToTop + currentOffset
-                view.layoutIfNeeded()
-
-                UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut ,animations: {
-                    self.shadingView.alpha = 0.7
-                    self.tableView.setContentOffset(CGPoint(x: 0.0, y: newOffset), animated: false)
-                }) { (ended) in
-                    self.isAnimating = false
-                    viewOnTop.removeFromSuperview()
-                    self.shadeAllOtherCellsExcept(cell: cell)
-                    self.shadingView.removeFromSuperview()
-                }
-                
-                CATransaction.commit()
+     
+                modifyExistingCell(viewOnTop, cell)
             }
         }
     }
+    
+    fileprivate func modifyNewCell(_ cell: TodoCell) {
+        shadingView.frame = CGRect(origin: CGPoint(x: 0, y: tableView.rowHeight), size: CGSize(width: tableView.frame.width, height: tableView.frame.height))
+        tableView.addSubview(shadingView)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.shadingView.alpha = 0.7
+        }) { (ended) in
+            self.shadingView.removeFromSuperview()
+            self.shadeAllOtherCellsExcept(cell: cell)
+        }
+    }
+    
+    fileprivate func modifyExistingCell(_ viewOnTop: UIView, _ cell: TodoCell) {
+        viewOnTop.frame = cell.frame
+        tableView.addSubview(viewOnTop)
+        
+        // setup a huge content inset so we can scroll the selected cell to top in any case
+        let contentInset = tableView.visibleSize.height - 40.0
+        tableView.contentInset.bottom = contentInset
+        
+        CATransaction.begin()
+        //                get the absolute position of the cell and calculate
+        //                the distance to the the top of the table
+        let distanceToTop = tableView.convert(cell.frame, to: view).minY - tableView.rowHeight
+        let currentOffset = tableView.contentOffset.y
+        let newOffset = distanceToTop + currentOffset
+        view.layoutIfNeeded()
+        
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut ,animations: {
+            self.shadingView.alpha = 0.7
+            self.tableView.setContentOffset(CGPoint(x: 0.0, y: newOffset), animated: false)
+        }) { (ended) in
+            self.isAnimating = false
+            viewOnTop.removeFromSuperview()
+            self.shadeAllOtherCellsExcept(cell: cell)
+            self.shadingView.removeFromSuperview()
+        }
+        
+        CATransaction.commit()
+    }
+    
     
     func todoCellWasModified(cell: TodoCell) {
         updateCellAndReturnToPreviousState(cell: cell)
@@ -1071,18 +1055,17 @@ extension ViewController:TodoCellDelegate{
         cell.setBackground(color: getNextColor)
     }
     
+    /*
+        View has detected that the cell was set to done (or reset to not done)
+        it animated the cell accordingly and informed the delegate (controller)
+        controller will do the following:
+          1. find where in the table (model) and table VC the item should be placed
+             below the last not done item (if it was set to done) or
+             above the first done item (it it was reset to not done
+          2. animate the cell to that position (and update the model accordingly) while
+          3. changing the bg and text color accordingly.
+     */
     func todoCellWasSetToDone(cell: TodoCell) {
-        /*
-            View has detected that the cell was set to done (or reset to not done)
-            it animated the cell accordingly and informed the delegate (controller)
-            controller will do the following:
-              1. find where in the table (model) and table VC the item should be placed
-                 below the last not done item (if it was set to done) or
-                 above the first done item (it it was reset to not done
-              2. animate the cell to that position (and update the model accordingly) while
-              3. changing the bg and text color accordingly.
-         */
-        // 1. find the indexPath for the chosen cell
         if let sourceIndexPath = tableView.indexPath(for: cell){
             let sourceIndex = self.rowNumberToIndex(from: sourceIndexPath.row)
 
@@ -1092,93 +1075,96 @@ extension ViewController:TodoCellDelegate{
             let destinationIndexPath = IndexPath(row: destinationRow, section: 0)
 
             // 3. Toggle the done property
-             listOfItems[sourceIndex].done = !listOfItems[sourceIndex].done
-            // 4. preserve the values of the cell (as a TodoItem) and create the animatedCell
-            let originalTodoItem = listOfItems[sourceIndex]
+            listOfItems[sourceIndex].done = !listOfItems[sourceIndex].done
             try! self.moc.save()
             
-            // 4. Animation
-            //    no animation if source == destination
+            // 4. Animation - no animation if source == destination
             if destinationIndex != sourceIndex{
-                // A. setup the view to animate
-                // since we are going to animate bg and text color
-                // a snapshot won't do, we need an actual view
-                let animatedCell = DummyCell(frame: cell.frame)
-                animatedCell.setBackground(color: cell.getBackGroundColor())
-                animatedCell.textField.attributedText = cell.textField.attributedText
-                animatedCell.textField.textColor = cell.textField.textColor
-                tableView.addSubview(animatedCell)
-                cell.setBackground(color: .black)
-                cell.textField.textColor = .black
-                // if the destination it is not visible don't travel the whole distance
-                // just one row more than what is visible (avoids animating too quickly)
-                var destinationIndexPathForAnimation:IndexPath
-                if let visibileIndices = tableView.indexPathsForVisibleRows{
-                    if visibileIndices.contains(destinationIndexPath) {
-                        destinationIndexPathForAnimation = destinationIndexPath
-                    }else{
-                        if sourceIndexPath.row < destinationIndexPath.row{
-                            // destinationIndexPath is below the visible area
-                            let last = visibileIndices.last!
-                            destinationIndexPathForAnimation = IndexPath(row: last.row +  1, section: 0)
-                        }else{
-                            // destinationIndexPath is above the visible area
-                            let first = visibileIndices.first!
-                            destinationIndexPathForAnimation = IndexPath(row: first.row - 1, section: 0 )
-                        }
-                    }
-                }else{
-                    destinationIndexPathForAnimation = destinationIndexPath
-                }
-
-                //let destinationFrame = frameForRow(at: destinationIndexPath)
-                let destinationFrame = frameForRow(at: destinationIndexPathForAnimation)
-
-                // group table update and dummy cell animation together (for animations to be in sync)
-                CATransaction.begin()
-                // start animation
-                UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [weak tableView = self.tableView] in
-                    animatedCell.frame = destinationFrame
-                    if self.listOfItems[sourceIndex].done == true {
-                        // if item is reset to not done,  bg and text color were previously changed (when threshold was passed). don't animate those
-                        animatedCell.textField.backgroundColor = .black
-                        animatedCell.contentView.backgroundColor = .black
-                        animatedCell.textField.layer.opacity = 0.27 // textColor is not animatable so we will use  opacity to simulate the effect
-                    }
-
-                    tableView?.beginUpdates()
-                    // remove the chosen cell
-                    print("Remove item.....")
-                    self.listOfItems.remove(at: sourceIndex)
-                    tableView?.deleteRows(at: [sourceIndexPath], with: .none)
-                    // create a dummy item at destination index (will act as placeholder while animation lasts)
-                    
-                    let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: self.moc)!
-                    self.listOfItems.insert(dummyTodoItemAtDestination, at: destinationIndex)
-                    tableView?.insertRows(at: [destinationIndexPath], with: .middle)
-                    tableView?.endUpdates()
-
-                }) { (finished) in
-                    self.tableView.beginUpdates()
-                    // swap the dummyItem with the selected item
-                    print("Remove item 2.....")
-                    self.listOfItems.remove(at: destinationIndex)
-                    self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
-                    self.listOfItems.insert(originalTodoItem, at: destinationIndex)
-                    self.tableView.insertRows(at: [destinationIndexPath], with: .none)
-                    self.tableView.endUpdates()
-                    // reload only the row at the destination, for the rest just update the bg color
-                    self.tableView.reloadRows(at: [destinationIndexPath], with: .none)
-                    self.updateColors()
-                    animatedCell.layer.isHidden = true
-                    animatedCell.removeFromSuperview()
-                    cell.removeFromSuperview()
-                    self.view.layoutIfNeeded()
-                }
-                CATransaction.commit()
+                animateCell(destinationIndex, cell, destinationIndexPath, sourceIndexPath, sourceIndex)
             } else{ //source == destination (just update the model)
                 tableView.reloadData()
             }
         }
+    }
+    
+    fileprivate func animateCell(_ destinationIndex: Int, _ cell: TodoCell, _ destinationIndexPath: IndexPath, _ sourceIndexPath: IndexPath, _ sourceIndex: Int) {
+        print("Destination index " + String(destinationIndex))
+        // A. setup the view to animate
+        // since we are going to animate bg and text color
+        // a snapshot won't do, we need an actual view
+        let animatedCell = DummyCell(frame: cell.frame)
+        animatedCell.setBackground(color: cell.getBackGroundColor())
+        animatedCell.textField.attributedText = cell.textField.attributedText
+        animatedCell.textField.textColor = cell.textField.textColor
+        tableView.addSubview(animatedCell)
+        cell.setBackground(color: .black)
+        cell.textField.textColor = .black
+        // if the destination it is not visible don't travel the whole distance
+        // just one row more than what is visible (avoids animating too quickly)
+        var destinationIndexPathForAnimation:IndexPath
+        if let visibileIndices = tableView.indexPathsForVisibleRows{
+            if visibileIndices.contains(destinationIndexPath) {
+                destinationIndexPathForAnimation = destinationIndexPath
+            }else{
+                if sourceIndexPath.row < destinationIndexPath.row{
+                    // destinationIndexPath is below the visible area
+                    let last = visibileIndices.last!
+                    destinationIndexPathForAnimation = IndexPath(row: last.row +  1, section: 0)
+                }else{
+                    // destinationIndexPath is above the visible area
+                    let first = visibileIndices.first!
+                    destinationIndexPathForAnimation = IndexPath(row: first.row - 1, section: 0 )
+                }
+            }
+        }else{
+            destinationIndexPathForAnimation = destinationIndexPath
+        }
+        
+        //let destinationFrame = frameForRow(at: destinationIndexPath)
+        let destinationFrame = frameForRow(at: destinationIndexPathForAnimation)
+        
+        // group table update and dummy cell animation together (for animations to be in sync)
+        CATransaction.begin()
+        // start animation
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [weak tableView = self.tableView] in
+            animatedCell.frame = destinationFrame
+            if self.listOfItems[sourceIndex].done == true {
+                // if item is reset to not done,  bg and text color were previously changed (when threshold was passed). don't animate those
+                animatedCell.textField.backgroundColor = .black
+                animatedCell.contentView.backgroundColor = .black
+                animatedCell.textField.layer.opacity = 0.27 // textColor is not animatable so we will use  opacity to simulate the effect
+            }
+            
+            tableView?.beginUpdates()
+            // remove the chosen cell
+            print("Remove item at " + String(sourceIndex))
+            self.listOfItems.remove(at: sourceIndex)
+            tableView?.deleteRows(at: [sourceIndexPath], with: .none)
+            // create a dummy item at destination index (will act as placeholder while animation lasts)
+            
+            let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: self.moc)!
+            print("Add brand new item at " + String(destinationIndex))
+            self.listOfItems.insert(dummyTodoItemAtDestination, at: destinationIndex)
+            tableView?.insertRows(at: [destinationIndexPath], with: .middle)
+            tableView?.endUpdates()
+            
+        }) { (finished) in
+            self.tableView.beginUpdates()
+            // swap the dummyItem with the selected item
+            print("Finished. Remove item at " + String(destinationIndex))
+            self.listOfItems.remove(at: destinationIndex)
+            self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
+            //                    self.listOfItems.insert(originalTodoItem, at: destinationIndex)
+            self.tableView.insertRows(at: [destinationIndexPath], with: .none)
+            self.tableView.endUpdates()
+            // reload only the row at the destination, for the rest just update the bg color
+            self.tableView.reloadRows(at: [destinationIndexPath], with: .none)
+            self.updateColors()
+            animatedCell.layer.isHidden = true
+            animatedCell.removeFromSuperview()
+            cell.removeFromSuperview()
+            self.view.layoutIfNeeded()
+        }
+        CATransaction.commit()
     }
 }
