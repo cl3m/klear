@@ -100,58 +100,13 @@ class ViewController: UIViewController {
 //    MARK: - model helper functions
     
 //    this holds the actual items
-    private var listOfItems:[Item] = []
+    private var todos: ToDos = ToDos(items: [])
     
-    private var indexOfLastDoneItem:Int{
-        get{
-            if let index = listOfItems.lastIndex(where: {$0.done == true }){
-                return listOfItems.count > 0 ? index + 1 : index
-            }else{
-                return 0
-            }
-        }
-    }
-    
-    private var indexOfFirstNotDoneItem:Int{
-        get{
-            if let index = listOfItems.firstIndex(where: {$0.done == false }){
-                return listOfItems.count > 0 ? index - 1 : index
-            }else{
-                return listOfItems.count - 1
-            }
-        }
-    }
-    
-    //    helper for the calculation of colors
-    private var countOfNotDoneItems:Int{
-        return listOfItems.filter({$0.done == false}).count
-    }
-    
-    private func createTodoItems(){
+    private func loadToDoItems(){
         print("Load items...")
-        listOfItems = ItemRepo.allIn(moc: moc)
+        todos = ItemRepo.allIn(moc: moc)
     }
-    
-    // model and tableView have opposite orders
-    // new item is appended in the model array , but shown first in the tableView
-    private var orderedListOfItems:[Item] {
-        get{
-            var reversed = listOfItems
-            reversed.reverse()
-            return reversed
-        }
-    }
-    
-    //    convert from row number to index and vice versa
-    //    (same algorithm used in both cases, used differently for clarity
-    private func rowNumberToIndex(from index:Int) -> Int{
-        return (listOfItems.count - 1 - index)
-    }
-    
-    private func indexToRowNumber(from row: Int) -> Int {
-        return rowNumberToIndex(from: row)
-    }
-    
+
 //    MARK: - helper UI variables and functions
     //    get the frame for indexPath
     //    !!CHECK!! not sure if this is needed
@@ -166,8 +121,8 @@ class ViewController: UIViewController {
     
     private var getNextColor: UIColor{
         get{
-            let index = rowNumberToIndex(from: indexOfFirstNotDoneItem)
-            return getColor(for: index, in: countOfNotDoneItems + 1)
+            let index = todos.rowNumberToIndex(from: todos.indexOfFirstNotDoneItem)
+            return getColor(for: index, in: todos.countOfNotDoneItems + 1)
         }
     }
 
@@ -215,7 +170,7 @@ class ViewController: UIViewController {
         tableViewInitialTopConstraint = tableViewTopConstraint.constant
 
         // initialize the list of items (and the table)
-        createTodoItems()
+        loadToDoItems()
         // this is used to create a dummy cell at the top of the table while adding a new item
         newItemCellPlaceholder = UITableViewCell(style: .default, reuseIdentifier: "TodoCell")
         
@@ -298,11 +253,11 @@ class ViewController: UIViewController {
             // update the model
             self.tableView.performBatchUpdates({
                 print("Remove item")
-                let victim = self.listOfItems[index]
+                let victim = self.todos.getAt(index: index)
                 self.moc.delete(victim)
                 try! self.moc.save()
                 WidgetCenter.shared.reloadAllTimelines()
-                self.listOfItems.remove(at: index)
+                self.todos.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
             }) { (done) in
                 self.tableView.reloadData()
@@ -312,8 +267,8 @@ class ViewController: UIViewController {
     
     fileprivate func updateCell(_ index: Int, cell: TodoCell) {
         //else just update the model
-        print(">>> Update title from " + (self.listOfItems[index].title ?? "") + " to " +  cell.textField.text!)
-        self.listOfItems[index].title = cell.textField.text!
+        //print(">>> Update title from " + (self.listOfItems[index].title ?? "") + " to " +  cell.textField.text!)
+        self.todos.setTitle(index: index, title: cell.textField.text)
         try! self.moc.save()
         self.tableView.reloadData()
     }
@@ -340,7 +295,7 @@ class ViewController: UIViewController {
   
             // update the model with the modified entry, or delete it if the text is now empty
             if let tableView = cell.superview as? UITableView, let indexPath = tableView.indexPath(for: cell){
-                let index = self.rowNumberToIndex(from: indexPath.row)
+                let index = self.todos.rowNumberToIndex(from: indexPath.row)
                 if cellIsToBeDeleted{
                     self.deleteCell(index, indexPath: indexPath, cell: cell)
                 }else{
@@ -380,7 +335,7 @@ class ViewController: UIViewController {
         item.title = ""
         item.done = false
         print("Add new item")
-        listOfItems.append(item)
+        todos.append(item: item)
         tableView.contentOffset.y = tableView.contentOffset.y + tableView.rowHeight
         tableView.reloadData()
        
@@ -444,21 +399,21 @@ class ViewController: UIViewController {
 
     private func getColor(for index:Int, in colorCount:Int = 0) -> UIColor{
         var color:UIColor
-        if countOfNotDoneItems < colors.count {
+        if todos.countOfNotDoneItems < colors.count {
             color = colors[index]
             return color
         }else{
             let startColor = colors.first!
             let endColor = colors.last!
             var percentage:CGFloat
-            percentage = colorCount == 0 ? CGFloat(index)/CGFloat(countOfNotDoneItems) : CGFloat(index)/CGFloat(colorCount)
+            percentage = colorCount == 0 ? CGFloat(index)/CGFloat(todos.countOfNotDoneItems) : CGFloat(index)/CGFloat(colorCount)
             let color = UIColor.interpolate(from: startColor, to: endColor, with: percentage)
             return color
         }
     }
 
     private func findNextDonePosition() -> Int{
-        if let index = orderedListOfItems.firstIndex(where: { $0.done == true }) {
+        if let index = todos.orderedListOfItems.firstIndex(where: { $0.done == true }) {
             return index
         }else{
             return 0
@@ -590,7 +545,7 @@ class ViewController: UIViewController {
                 //                1. dragginCellSnapshot is beyond the list of items so, it should get the final indexpath
                 //                 2. dragginCellSnapshot is at the very top, it should get index = 0
                 if let draggingIndexPath = Drag.currentIndexPath{
-                    if draggingIndexPath.row == 0 || draggingIndexPath.row == listOfItems.count - 1{
+                    if draggingIndexPath.row == 0 || draggingIndexPath.row == todos.count() - 1{
                         if  let destinationCell = tableView.cellForRow(at: draggingIndexPath){
                             let destinationFrame = tableView.convert(destinationCell.frame, to: view)
                             animateSnapshotToFinalFrame(destinationFrame)
@@ -701,22 +656,10 @@ class ViewController: UIViewController {
         if let currentCell = tableView.cellForRow(at: i) as? TodoCell{
             currentCell.isHidden = true
         }
-        let initialIndex = rowNumberToIndex(from: i.row)
-        let endIndex = rowNumberToIndex(from: j.row)
+        let initialIndex = todos.rowNumberToIndex(from: i.row)
+        let endIndex = todos.rowNumberToIndex(from: j.row)
         print("Swap from " + String(initialIndex) + " to " + String(endIndex))
-        
-        var memo = listOfItems.map {
-            ($0.title, $0.done)
-        }
-        memo.swapAt(initialIndex, endIndex)
-
-        for (index, element) in memo.enumerated() {
-            print("Item \(index): \(element)")
-            let savedItem = listOfItems[index]
-            savedItem.title = element.0
-            savedItem.done = element.1
-        }
-
+        todos.swap(from: initialIndex, to: endIndex)
         try! self.moc.save()
         tableView.endUpdates()
         WidgetCenter.shared.reloadAllTimelines()
@@ -729,23 +672,23 @@ class ViewController: UIViewController {
     private func animateSnapshotToFinalFrame(_ frame:CGRect) {
         print("Animate")
 
-        let initialIndex = rowNumberToIndex(from: Drag.currentIndexPath!.row)
+        let initialIndex = todos.rowNumberToIndex(from: Drag.currentIndexPath!.row)
         var isChanged = false
-        let todoItem = listOfItems[initialIndex]
+        let todoItem = todos.getAt(index: initialIndex)
         //        check if done property needs to be changed
         //        we need to change it in the following situations:
         //        A. it is done and the previous one is not done
 
         if todoItem.done {
-            if initialIndex >  1 && listOfItems[initialIndex - 1].done == false{
-                listOfItems[initialIndex].done = false
+            if initialIndex >  1 && todos.getAt(index: initialIndex - 1).done == false{
+                todos.setNotDone(index: initialIndex)
                 isChanged = true
                 
             }
 //        B. it is not done and the next one is done
         }else{
-            if initialIndex + 1 < listOfItems.count && listOfItems[initialIndex + 1].done == true {
-                    listOfItems[initialIndex].done = true
+            if initialIndex + 1 < todos.count() && todos.getAt(index: initialIndex + 1).done == true {
+                todos.setDone(index: initialIndex)
                     isChanged = true
                 }
             }
@@ -781,12 +724,12 @@ class ViewController: UIViewController {
 // MARK: - TableView delegate methods
 extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return listOfItems.count
+        return todos.count()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell") as! TodoCell
-        let todoItem = orderedListOfItems[indexPath.row]
+        let todoItem = todos.orderedListOfItems[indexPath.row]
 
         cell.resetCell()
         cell.delegate = self
@@ -1015,8 +958,8 @@ extension ViewController:TodoCellDelegate{
         print("Cell was modified " + cell.textField.text!)
         
         if let indexPath = tableView.indexPath(for: cell){
-            let index = rowNumberToIndex(from: indexPath.row)
-            let item = listOfItems[index]
+            let index = todos.rowNumberToIndex(from: indexPath.row)
+            let item = todos.getAt(index: index)
             item.title = cell.textField.text!
             try! moc.save()
             WidgetCenter.shared.reloadAllTimelines()
@@ -1028,15 +971,15 @@ extension ViewController:TodoCellDelegate{
     func todoCellWasSetToDeleted(cell: TodoCell) {
         print("to delete")
         if let indexPath = tableView.indexPath(for: cell){
-            let index = rowNumberToIndex(from: indexPath.row)
+            let index = todos.rowNumberToIndex(from: indexPath.row)
             tableView.performBatchUpdates({
                 cell.delegate = nil
-                let victim = self.listOfItems[index]
+                let victim = self.todos.getAt(index: index)
                 self.moc.delete(victim)
                 try! self.moc.save()
                 WidgetCenter.shared.reloadAllTimelines()
                 
-                listOfItems.remove(at: index)
+                todos.remove(at: index)
                 tableView.deleteRows(at: [indexPath], with: .left)
             }) { (finished) in
                 self.tableView.reloadData()
@@ -1067,17 +1010,18 @@ extension ViewController:TodoCellDelegate{
      */
     func todoCellWasSetToDone(cell: TodoCell) {
         if let sourceIndexPath = tableView.indexPath(for: cell){
-            let sourceIndex = self.rowNumberToIndex(from: sourceIndexPath.row)
+            let sourceIndex = self.todos.rowNumberToIndex(from: sourceIndexPath.row)
 
             // 2. Calculate the destination
-            let destinationIndex = listOfItems[sourceIndex].done ? indexOfFirstNotDoneItem :  indexOfLastDoneItem
-            let destinationRow = rowNumberToIndex(from: destinationIndex)
+            let destinationIndex = todos.getAt(index: sourceIndex).done ? todos.indexOfFirstNotDoneItem :  todos.indexOfLastDoneItem
+            let destinationRow = todos.rowNumberToIndex(from: destinationIndex)
             let destinationIndexPath = IndexPath(row: destinationRow, section: 0)
 
             // 3. Toggle the done property
-            listOfItems[sourceIndex].done = !listOfItems[sourceIndex].done
+            todos.toggleDone(index: sourceIndex)
             try! self.moc.save()
             
+            print("Marked as done from " + String(sourceIndex) + " to " + String(destinationIndex))
             // 4. Animation - no animation if source == destination
             if destinationIndex != sourceIndex{
                 animateCell(destinationIndex, cell, destinationIndexPath, sourceIndexPath, sourceIndex)
@@ -1088,7 +1032,7 @@ extension ViewController:TodoCellDelegate{
     }
     
     fileprivate func animateCell(_ destinationIndex: Int, _ cell: TodoCell, _ destinationIndexPath: IndexPath, _ sourceIndexPath: IndexPath, _ sourceIndex: Int) {
-        print("Destination index " + String(destinationIndex))
+    
         // A. setup the view to animate
         // since we are going to animate bg and text color
         // a snapshot won't do, we need an actual view
@@ -1107,10 +1051,12 @@ extension ViewController:TodoCellDelegate{
                 destinationIndexPathForAnimation = destinationIndexPath
             }else{
                 if sourceIndexPath.row < destinationIndexPath.row{
+                    print("Moving down")
                     // destinationIndexPath is below the visible area
                     let last = visibileIndices.last!
                     destinationIndexPathForAnimation = IndexPath(row: last.row +  1, section: 0)
                 }else{
+                    print("Moving up")
                     // destinationIndexPath is above the visible area
                     let first = visibileIndices.first!
                     destinationIndexPathForAnimation = IndexPath(row: first.row - 1, section: 0 )
@@ -1128,7 +1074,7 @@ extension ViewController:TodoCellDelegate{
         // start animation
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [weak tableView = self.tableView] in
             animatedCell.frame = destinationFrame
-            if self.listOfItems[sourceIndex].done == true {
+            if self.todos.getAt(index: sourceIndex).done {
                 // if item is reset to not done,  bg and text color were previously changed (when threshold was passed). don't animate those
                 animatedCell.textField.backgroundColor = .black
                 animatedCell.contentView.backgroundColor = .black
@@ -1138,13 +1084,13 @@ extension ViewController:TodoCellDelegate{
             tableView?.beginUpdates()
             // remove the chosen cell
             print("Remove item at " + String(sourceIndex))
-            self.listOfItems.remove(at: sourceIndex)
+            self.todos.remove(at: sourceIndex)
             tableView?.deleteRows(at: [sourceIndexPath], with: .none)
             // create a dummy item at destination index (will act as placeholder while animation lasts)
             
             let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: self.moc)!
             print("Add brand new item at " + String(destinationIndex))
-            self.listOfItems.insert(dummyTodoItemAtDestination, at: destinationIndex)
+            self.todos.insert(item: dummyTodoItemAtDestination, at: destinationIndex)
             tableView?.insertRows(at: [destinationIndexPath], with: .middle)
             tableView?.endUpdates()
             
@@ -1152,7 +1098,7 @@ extension ViewController:TodoCellDelegate{
             self.tableView.beginUpdates()
             // swap the dummyItem with the selected item
             print("Finished. Remove item at " + String(destinationIndex))
-            self.listOfItems.remove(at: destinationIndex)
+            self.todos.remove(at: destinationIndex)
             self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
             //                    self.listOfItems.insert(originalTodoItem, at: destinationIndex)
             self.tableView.insertRows(at: [destinationIndexPath], with: .none)

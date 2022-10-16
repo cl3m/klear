@@ -17,7 +17,6 @@ class CoreDataStack {
     }
     
     init(storeUrl:NSURL?) {
-        print("!!!!!!!! NEW MOC")
         let modelUrl = Bundle.main.url(forResource: "Model", withExtension: "momd")
         let model = NSManagedObjectModel(contentsOf: modelUrl!)
         let psc = NSPersistentStoreCoordinator(managedObjectModel: model!)
@@ -53,9 +52,7 @@ class CoreDataStack {
             try fm.createDirectory(at: dataDir, withIntermediateDirectories: true)
         } catch {}
 
-        if fm.fileExists(atPath: sqliteUrl.path) {
-            print("File exists")
-        } else {
+        if !fm.fileExists(atPath: sqliteUrl.path) {
             NSData().write(to: sqliteUrl, atomically: true)
         }
 

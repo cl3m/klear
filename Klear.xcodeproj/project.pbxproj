@@ -14,7 +14,9 @@
 		974212D028F0E3F900FA3E37 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C628EF73BF00FA3E37 /* CoreDataStack.swift */; };
 		97591C7128F8857B001076E1 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97591C7028F8857B001076E1 /* Direction.swift */; };
 		97591C7328F8859A001076E1 /* Drag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97591C7228F8859A001076E1 /* Drag.swift */; };
+		97591C7728F886A4001076E1 /* ToDos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97591C7628F886A4001076E1 /* ToDos.swift */; };
 		977887FF28EA2FD400C92F0A /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */; };
+		977970AE28FC350E0048D8C7 /* ToDos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97591C7628F886A4001076E1 /* ToDos.swift */; };
 		979054E228E9EF4800FF8E13 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E128E9EF4700FF8E13 /* WidgetKit.framework */; };
 		979054E428E9EF4800FF8E13 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 979054E328E9EF4800FF8E13 /* SwiftUI.framework */; };
 		979054E728E9EF4800FF8E13 /* KlearWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979054E628E9EF4800FF8E13 /* KlearWidget.swift */; };
@@ -66,6 +68,7 @@
 		974212C928F093FE00FA3E37 /* KlearWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KlearWidgetExtension.entitlements; sourceTree = "<group>"; };
 		97591C7028F8857B001076E1 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		97591C7228F8859A001076E1 /* Drag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drag.swift; sourceTree = "<group>"; };
+		97591C7628F886A4001076E1 /* ToDos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDos.swift; sourceTree = "<group>"; };
 		977887FE28EA2FD400C92F0A /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		979054DF28E9EF4700FF8E13 /* KlearWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KlearWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		979054E128E9EF4700FF8E13 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -170,6 +173,7 @@
 				974212C428EF6FFD00FA3E37 /* ItemRepo.swift */,
 				97591C7028F8857B001076E1 /* Direction.swift */,
 				97591C7228F8859A001076E1 /* Drag.swift */,
+				97591C7628F886A4001076E1 /* ToDos.swift */,
 			);
 			path = Klear;
 			sourceTree = "<group>";
@@ -220,7 +224,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Yorwos Pallikaropoulos";
 				TargetAttributes = {
 					979054DE28E9EF4700FF8E13 = {
@@ -283,6 +287,7 @@
 				979054E728E9EF4800FF8E13 /* KlearWidget.swift in Sources */,
 				974212CF28F0E3E700FA3E37 /* ItemRepo.swift in Sources */,
 				974212CD28F0E3B500FA3E37 /* Model.xcdatamodeld in Sources */,
+				977970AE28FC350E0048D8C7 /* ToDos.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +298,7 @@
 				979054ED28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */,
 				BD14C92024A5002700209708 /* ViewController.swift in Sources */,
 				BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */,
+				97591C7728F886A4001076E1 /* ToDos.swift in Sources */,
 				97591C7328F8859A001076E1 /* Drag.swift in Sources */,
 				974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */,
 				BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */,
@@ -415,6 +421,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -475,6 +482,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

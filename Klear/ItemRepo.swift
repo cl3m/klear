@@ -16,14 +16,14 @@ class ItemRepo: NSManagedObject {
         return newObject
     }
 
-    class func allIn(moc: NSManagedObjectContext) -> [Item] {
+    class func allIn(moc: NSManagedObjectContext) -> ToDos {
         print("get all items")
         let request = NSFetchRequest<Item>(entityName: "Item")
         
          do {
-             return try moc.fetch(request)
+             return try ToDos(items: moc.fetch(request))
          } catch {
-             return []
+             return ToDos(items: [])
          }
     }
 }
