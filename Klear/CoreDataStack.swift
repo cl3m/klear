@@ -45,8 +45,8 @@ class CoreDataStack {
         let documentDirUrl = fm.containerURL(
               forSecurityApplicationGroupIdentifier: "group.com.skw.klear")!
 
-        let dataDir = documentDirUrl.appendingPathComponent("NoteNote/Data")
-        let sqliteUrl = dataDir.appendingPathComponent("notenote.sqlite")
+        let dataDir = documentDirUrl.appendingPathComponent("Klear/Data")
+        let sqliteUrl = dataDir.appendingPathComponent("klear.sqlite")
         
         do {
             try fm.createDirectory(at: dataDir, withIntermediateDirectories: true)

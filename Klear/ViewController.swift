@@ -101,10 +101,11 @@ class ViewController: UIViewController {
     
 //    this holds the actual items
     private var todos: ToDos = ToDos(items: [])
+    private var list: String = "Personal"
     
     private func loadToDoItems(){
         print("Load items...")
-        todos = ItemRepo.allIn(moc: moc)
+        todos = ItemRepo.allIn(moc: moc, list: list)
     }
 
 //    MARK: - helper UI variables and functions
@@ -254,7 +255,7 @@ class ViewController: UIViewController {
             self.tableView.performBatchUpdates({
                 print("Remove item")
                 self.todos.remove(at: index)
-                ItemRepo.saveIn(moc: self.moc, todos: self.todos)
+                ItemRepo.saveIn(moc: self.moc, todos: self.todos, list: self.list)
                 WidgetCenter.shared.reloadAllTimelines()
                 self.todos.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
@@ -631,7 +632,7 @@ class ViewController: UIViewController {
         let endIndex = todos.rowNumberToIndex(from: j.row)
         print("Swap from " + String(initialIndex) + " to " + String(endIndex))
         todos.swap(from: initialIndex, to: endIndex)
-        ItemRepo.saveIn(moc: moc, todos: todos)
+        ItemRepo.saveIn(moc: moc, todos: todos, list: list)
         tableView.endUpdates()
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -933,7 +934,7 @@ extension ViewController:TodoCellDelegate{
             let index = todos.rowNumberToIndex(from: indexPath.row)
             let item = todos.getAt(index: index)
             item.setTitle(title: cell.textField.text)
-            ItemRepo.saveIn(moc: moc, todos: todos)
+            ItemRepo.saveIn(moc: moc, todos: todos, list: list)
             WidgetCenter.shared.reloadAllTimelines()
         }
     }
@@ -947,7 +948,7 @@ extension ViewController:TodoCellDelegate{
             tableView.performBatchUpdates({
                 cell.delegate = nil
                 self.todos.remove(at: index)
-                ItemRepo.saveIn(moc: moc, todos: todos)
+                ItemRepo.saveIn(moc: moc, todos: todos, list: list)
                 WidgetCenter.shared.reloadAllTimelines()
                 
                 tableView.deleteRows(at: [indexPath], with: .left)
@@ -991,7 +992,7 @@ extension ViewController:TodoCellDelegate{
             
             // 3. Toggle the done property
             todos.getAt(index: sourceIndex).toggleDone()
-            ItemRepo.saveIn(moc: moc, todos: todos)
+            ItemRepo.saveIn(moc: moc, todos: todos, list: list)
             
             // 4. Animation - no animation if source == destination
             if destinationIndex != sourceIndex{
@@ -1069,7 +1070,7 @@ extension ViewController:TodoCellDelegate{
             self.todos.remove(at: destinationIndex)
             self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
             self.todos.insert(item: originalTodoItem, at: destinationIndex)
-            ItemRepo.saveIn(moc: self.moc, todos: self.todos)
+            ItemRepo.saveIn(moc: self.moc, todos: self.todos, list: self.list)
         
             self.tableView.insertRows(at: [destinationIndexPath], with: .none)
             self.tableView.endUpdates()
