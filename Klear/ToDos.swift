@@ -67,7 +67,9 @@ class ToDos {
     }
     
     func remove(at: Int) {
-        listOfItems.remove(at: at)
+        if (at < count()) {
+            listOfItems.remove(at: at)
+        }
     }
     
     func append(item: ToDo) {
