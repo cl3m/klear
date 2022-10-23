@@ -10,18 +10,38 @@ import Foundation
 import CoreData
 
 class ItemRepo: NSManagedObject {
-    class func makeIn(moc: NSManagedObjectContext) -> Item? {
-        print("Make new item")
-        let newObject = NSEntityDescription.insertNewObject(forEntityName: "Item", into:moc) as! Item
-        return newObject
+    class func clear(moc: NSManagedObjectContext) {
+        let request = NSFetchRequest<Item>(entityName: "Item")
+        let items = try! moc.fetch(request)
+        items.forEach { moc.delete($0) }
+        try! moc.save()
+    }
+    
+    class func saveIn(moc: NSManagedObjectContext, todos: ToDos) {
+        print("Saving items: " + todos.to_s())
+        
+        clear(moc: moc)
+
+        todos.orderedListOfItems.forEach {
+            let item = NSEntityDescription.insertNewObject(forEntityName: "Item", into:moc) as! Item
+            item.title = $0.getTitle()
+            item.done = $0.isDone()
+        }
+        try! moc.save()
+    }
+    
+    class func create() -> ToDo {
+        return ToDo(title: "", done: false)
     }
 
     class func allIn(moc: NSManagedObjectContext) -> ToDos {
-        print("get all items")
         let request = NSFetchRequest<Item>(entityName: "Item")
         
          do {
-             return try ToDos(items: moc.fetch(request))
+             let items = try moc.fetch(request)
+             let todos = ToDos(items: items.map { ToDo(title: $0.title ?? "", done: $0.done)})
+             print("Loaded " + todos.to_s())
+             return todos
          } catch {
              return ToDos(items: [])
          }

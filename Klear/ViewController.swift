@@ -253,9 +253,8 @@ class ViewController: UIViewController {
             // update the model
             self.tableView.performBatchUpdates({
                 print("Remove item")
-                let victim = self.todos.getAt(index: index)
-                self.moc.delete(victim)
-                try! self.moc.save()
+                self.todos.remove(at: index)
+                ItemRepo.saveIn(moc: self.moc, todos: self.todos)
                 WidgetCenter.shared.reloadAllTimelines()
                 self.todos.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
@@ -268,8 +267,7 @@ class ViewController: UIViewController {
     fileprivate func updateCell(_ index: Int, cell: TodoCell) {
         //else just update the model
         //print(">>> Update title from " + (self.listOfItems[index].title ?? "") + " to " +  cell.textField.text!)
-        self.todos.setTitle(index: index, title: cell.textField.text)
-        try! self.moc.save()
+        self.todos.getAt(index: index).setTitle(title: cell.textField.text)
         self.tableView.reloadData()
     }
     
@@ -331,10 +329,7 @@ class ViewController: UIViewController {
             4. make the new cell's text field the fiest responder
                (this triggers the whole editing procedure)
          */
-        let item = ItemRepo.makeIn(moc: moc)!
-        item.title = ""
-        item.done = false
-        print("Add new item")
+        let item = ItemRepo.create()
         todos.append(item: item)
         tableView.contentOffset.y = tableView.contentOffset.y + tableView.rowHeight
         tableView.reloadData()
@@ -412,13 +407,7 @@ class ViewController: UIViewController {
         }
     }
 
-    private func findNextDonePosition() -> Int{
-        if let index = todos.orderedListOfItems.firstIndex(where: { $0.done == true }) {
-            return index
-        }else{
-            return 0
-        }
-    }
+
     
     private func shadeAllOtherCellsExcept(cell: UITableViewCell, with alpha: CGFloat = 0.3){
         tableView.visibleCells.forEach { (visibleCell) in
@@ -660,7 +649,7 @@ class ViewController: UIViewController {
         let endIndex = todos.rowNumberToIndex(from: j.row)
         print("Swap from " + String(initialIndex) + " to " + String(endIndex))
         todos.swap(from: initialIndex, to: endIndex)
-        try! self.moc.save()
+        ItemRepo.saveIn(moc: moc, todos: todos)
         tableView.endUpdates()
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -679,16 +668,16 @@ class ViewController: UIViewController {
         //        we need to change it in the following situations:
         //        A. it is done and the previous one is not done
 
-        if todoItem.done {
-            if initialIndex >  1 && todos.getAt(index: initialIndex - 1).done == false{
-                todos.setNotDone(index: initialIndex)
+        if todoItem.isDone() {
+            if initialIndex >  1 && todos.getAt(index: initialIndex - 1).isNotDone() {
+                todos.getAt(index: initialIndex).setNotDone()
                 isChanged = true
                 
             }
 //        B. it is not done and the next one is done
         }else{
-            if initialIndex + 1 < todos.count() && todos.getAt(index: initialIndex + 1).done == true {
-                todos.setDone(index: initialIndex)
+            if initialIndex + 1 < todos.count() && todos.getAt(index: initialIndex + 1).isDone() {
+                todos.getAt(index: initialIndex).setDone()
                     isChanged = true
                 }
             }
@@ -733,17 +722,17 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
 
         cell.resetCell()
         cell.delegate = self
-        cell.setText(todoItem.title ?? "")
-        let cellColor = todoItem.done ?  #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) : getColor(for: indexPath.row)
+        cell.setText(todoItem.getTitle())
+        let cellColor = todoItem.isDone() ?  #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) : getColor(for: indexPath.row)
             
         cell.setBackground(color: cellColor)
 
         // set the text attributes accoringly if item is done or not
-        if todoItem.done {
+        if todoItem.isDone() {
             cell.textField.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
             
             // make the text  strikethrough
-            let attributedString: NSMutableAttributedString =  NSMutableAttributedString(string: todoItem.title!)
+            let attributedString: NSMutableAttributedString =  NSMutableAttributedString(string: todoItem.getTitle())
             let font = UIFont(name: "Helvetica", size: 17.0)
             attributedString.addAttribute(NSAttributedString.Key.font, value: font!, range: NSMakeRange(0, attributedString.length))
             attributedString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributedString.length))
@@ -755,7 +744,7 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
             cell.textField.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
             cell.textField.isEnabled = true
         }
-        cell.isAlreadyDone = todoItem.done
+        cell.isAlreadyDone = todoItem.isDone()
         return cell
     }
     
@@ -960,8 +949,8 @@ extension ViewController:TodoCellDelegate{
         if let indexPath = tableView.indexPath(for: cell){
             let index = todos.rowNumberToIndex(from: indexPath.row)
             let item = todos.getAt(index: index)
-            item.title = cell.textField.text!
-            try! moc.save()
+            item.setTitle(title: cell.textField.text)
+            ItemRepo.saveIn(moc: moc, todos: todos)
             WidgetCenter.shared.reloadAllTimelines()
         }
     }
@@ -974,12 +963,10 @@ extension ViewController:TodoCellDelegate{
             let index = todos.rowNumberToIndex(from: indexPath.row)
             tableView.performBatchUpdates({
                 cell.delegate = nil
-                let victim = self.todos.getAt(index: index)
-                self.moc.delete(victim)
-                try! self.moc.save()
+                self.todos.remove(at: index)
+                ItemRepo.saveIn(moc: moc, todos: todos)
                 WidgetCenter.shared.reloadAllTimelines()
                 
-                todos.remove(at: index)
                 tableView.deleteRows(at: [indexPath], with: .left)
             }) { (finished) in
                 self.tableView.reloadData()
@@ -1013,15 +1000,16 @@ extension ViewController:TodoCellDelegate{
             let sourceIndex = self.todos.rowNumberToIndex(from: sourceIndexPath.row)
 
             // 2. Calculate the destination
-            let destinationIndex = todos.getAt(index: sourceIndex).done ? todos.indexOfFirstNotDoneItem :  todos.indexOfLastDoneItem
+            let destinationIndex = todos.getAt(index: sourceIndex).isDone() ? todos.indexOfFirstNotDoneItem :  todos.indexOfLastDoneItem
             let destinationRow = todos.rowNumberToIndex(from: destinationIndex)
             let destinationIndexPath = IndexPath(row: destinationRow, section: 0)
 
-            // 3. Toggle the done property
-            todos.toggleDone(index: sourceIndex)
-            try! self.moc.save()
-            
             print("Marked as done from " + String(sourceIndex) + " to " + String(destinationIndex))
+            
+            // 3. Toggle the done property
+            todos.getAt(index: sourceIndex).toggleDone()
+            ItemRepo.saveIn(moc: moc, todos: todos)
+            
             // 4. Animation - no animation if source == destination
             if destinationIndex != sourceIndex{
                 animateCell(destinationIndex, cell, destinationIndexPath, sourceIndexPath, sourceIndex)
@@ -1032,7 +1020,9 @@ extension ViewController:TodoCellDelegate{
     }
     
     fileprivate func animateCell(_ destinationIndex: Int, _ cell: TodoCell, _ destinationIndexPath: IndexPath, _ sourceIndexPath: IndexPath, _ sourceIndex: Int) {
-    
+        // preserve the values of the cell (as a TodoItem) and create the animatedCell
+        let originalTodoItem = self.todos.getAt(index: sourceIndex)
+
         // A. setup the view to animate
         // since we are going to animate bg and text color
         // a snapshot won't do, we need an actual view
@@ -1074,7 +1064,7 @@ extension ViewController:TodoCellDelegate{
         // start animation
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [weak tableView = self.tableView] in
             animatedCell.frame = destinationFrame
-            if self.todos.getAt(index: sourceIndex).done {
+            if self.todos.getAt(index: sourceIndex).isDone() {
                 // if item is reset to not done,  bg and text color were previously changed (when threshold was passed). don't animate those
                 animatedCell.textField.backgroundColor = .black
                 animatedCell.contentView.backgroundColor = .black
@@ -1088,8 +1078,8 @@ extension ViewController:TodoCellDelegate{
             tableView?.deleteRows(at: [sourceIndexPath], with: .none)
             // create a dummy item at destination index (will act as placeholder while animation lasts)
             
-            let dummyTodoItemAtDestination = ItemRepo.makeIn(moc: self.moc)!
-            print("Add brand new item at " + String(destinationIndex))
+            let dummyTodoItemAtDestination = ItemRepo.create()
+            print("Add brand new dummy item at " + String(destinationIndex))
             self.todos.insert(item: dummyTodoItemAtDestination, at: destinationIndex)
             tableView?.insertRows(at: [destinationIndexPath], with: .middle)
             tableView?.endUpdates()
@@ -1097,10 +1087,13 @@ extension ViewController:TodoCellDelegate{
         }) { (finished) in
             self.tableView.beginUpdates()
             // swap the dummyItem with the selected item
-            print("Finished. Remove item at " + String(destinationIndex))
+            print("Finished. Remove dummy item at " + String(destinationIndex))
             self.todos.remove(at: destinationIndex)
             self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
-            //                    self.listOfItems.insert(originalTodoItem, at: destinationIndex)
+            print("Now add the original item " + originalTodoItem.getTitle() + " back in its new position " + String(destinationIndex))
+            self.todos.insert(item: originalTodoItem, at: destinationIndex)
+            ItemRepo.saveIn(moc: self.moc, todos: self.todos)
+        
             self.tableView.insertRows(at: [destinationIndexPath], with: .none)
             self.tableView.endUpdates()
             // reload only the row at the destination, for the rest just update the bg color

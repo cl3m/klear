@@ -8,12 +8,53 @@
 
 import Foundation
 
-class ToDos {
+class ToDo {
+    private var title: String
+    private var done: Bool
 
+    init(title: String, done: Bool) {
+        self.title = title
+        self.done = done
+    }
+    
+    func setTitle(title: String?) {
+        self.title = title ?? ""
+    }
+
+    func getTitle() -> String {
+        return title
+    }
+    
+    func isDone() -> Bool {
+        return done
+    }
+    
+    func isNotDone() -> Bool {
+        return !done
+    }
+    
+    func setNotDone() {
+        done = false
+    }
+    
+    func setDone() {
+        done = true
+    }
+    
+    func toggleDone() {
+        done = !done
+    }
+
+    func to_s() -> String {
+        "<" + title + "> " + String(done)
+    }
+}
+
+class ToDos {
     //    this holds the actual items
-    private var listOfItems:[Item] = []
+    private var listOfItems:[ToDo] = []
         
-    init(items: [Item]) {
+    init(items: [ToDo]) {
         listOfItems = items
     }
     
@@ -21,23 +62,7 @@ class ToDos {
         return listOfItems.count
     }
     
-    func setTitle(index: Int, title: String?) {
-        listOfItems[index].title = title ?? ""
-    }
-    
-    func setNotDone(index: Int) {
-        listOfItems[index].done = false
-    }
-    
-    func setDone(index: Int) {
-        listOfItems[index].done = true
-    }
-    
-    func toggleDone(index: Int) {
-        listOfItems[index].done = !listOfItems[index].done
-    }
-    
-    func getAt(index: Int) -> Item {
+    func getAt(index: Int) -> ToDo {
         return listOfItems[index]
     }
     
@@ -45,41 +70,25 @@ class ToDos {
         listOfItems.remove(at: at)
     }
     
-    func append(item: Item) {
+    func append(item: ToDo) {
         listOfItems.append(item)
     }
     
-    func insert(item: Item, at: Int) {
+    func insert(item: ToDo, at: Int) {
         listOfItems.insert(item, at: at)
     }
     
     func swap(from: Int, to: Int) {
-        var memo = listOfItems.map {
-            ($0.title, $0.done)
-        }
-        memo.swapAt(from, to)
-        
-        for (index, element) in memo.enumerated() {
-            print("Item \(index): \(element)")
-            let savedItem = listOfItems[index]
-            savedItem.title = element.0
-            savedItem.done = element.1
-        }
+        listOfItems.swapAt(from, to)
     }
     
-    var indexOfLastDoneItem:Int{
-        get{
-            if let index = listOfItems.lastIndex(where: {$0.done == true }){
-                return listOfItems.count > 0 ? index + 1 : index
-            }else{
-                return 0
-            }
-        }
-    }
+
+    
+ 
     
     var indexOfFirstNotDoneItem:Int{
         get{
-            if let index = listOfItems.firstIndex(where: {$0.done == false }){
+            if let index = listOfItems.firstIndex(where: {$0.isNotDone() }){
                 return listOfItems.count > 0 ? index - 1 : index
             }else{
                 return listOfItems.count - 1
@@ -89,17 +98,37 @@ class ToDos {
     
     //    helper for the calculation of colors
     var countOfNotDoneItems:Int{
-        return listOfItems.filter({$0.done == false}).count
+        return listOfItems.filter({$0.isNotDone()}).count
     }
     
     
     // model and tableView have opposite orders
     // new item is appended in the model array , but shown first in the tableView
-    var orderedListOfItems:[Item] {
+    var orderedListOfItems:[ToDo] {
         get{
             var reversed = listOfItems
             reversed.reverse()
             return reversed
+        }
+    }
+    
+    var indexOfFirstDoneItem: Int{
+        get{
+            if let index = orderedListOfItems.firstIndex(where: { $0.isDone() }) {
+                return index
+            }else{
+                return 0
+            }
+        }
+    }
+    
+    var indexOfLastDoneItem:Int{
+        get{
+            if let index = listOfItems.lastIndex(where: {$0.isDone() }){
+                return listOfItems.count > 0 ? index + 1 : index
+            }else{
+                return 0
+            }
         }
     }
     
@@ -113,4 +142,7 @@ class ToDos {
         return rowNumberToIndex(from: row)
     }
     
+    func to_s() -> String {
+        listOfItems.map { $0.to_s() }.joined(separator: ", ")
+    }
 }
