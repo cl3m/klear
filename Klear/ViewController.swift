@@ -781,8 +781,7 @@ extension ViewController: UIScrollViewDelegate{
             placeHolderViewHeightConstraint.constant = 0.0
             let baseAlpha:CGFloat = 0.2
             let dragPercentage = abs(scrollOffset) < abs(scrollOffsetThreshold) ? scrollOffset/scrollOffsetThreshold : 1.0
-            let switchToLists = scrollOffset/scrollOffsetThreshold > 1.4
-            
+            let switchToLists = scrollOffset/scrollOffsetThreshold > 1.7
             
             // set up the layer
             newItemCellPlaceholder.backgroundColor = switchToLists ? UIColor.black : colors.first!
@@ -797,15 +796,25 @@ extension ViewController: UIScrollViewDelegate{
                 newItemCellPlaceholder.layer.transform = CATransform3DMakeRotation(transformRatio, 1, 0, 0)
             }
             
-            if scrollOffsetWhenDraggingEnded < scrollOffsetThreshold{
-                // if at the moment the dragging ended (user released) the offset passed the threshold we are in adding mode
-                
-                print("Adding new item")
+            if scrollOffsetWhenDraggingEnded < scrollOffsetThreshold {
                 scrollOffsetWhenDraggingEnded = 0
-                addingNewItemMode = true //will exit only after textField ends editing
                 newItemCellPlaceholder.textLabel?.text = ""
                 removePlaceHolderForNewItem()
-                addNewItem(at: IndexPath(row: 0, section: 0))
+                
+                if switchToLists {
+                    print("User released in List of Lists mode")
+                    self.list = "Lists"
+                    titleLabel.text = list
+                    self.loadToDoItems()
+                    self.tableView.reloadData()
+                } else {
+                    // if at the moment the dragging ended (user released) the offset passed the threshold we are in adding mode
+                    print("User released in Add mode")
+                    
+                    addingNewItemMode = true //will exit only after textField ends editing
+                    
+                    addNewItem(at: IndexPath(row: 0, section: 0))
+                }
             }
         }else if scrollOffset > 0{//normal scrolling
             // grow placeholder' height while scrolling (up to the height of a row)
