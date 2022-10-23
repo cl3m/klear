@@ -14,6 +14,7 @@ protocol TodoCellDelegate: UIViewController {
     func todoCellWasSetToDone(cell:TodoCell)
     func todoCellWasSetToDeleted(cell:TodoCell)
     func todoCellPassedTheDoneThreshold(cell: TodoCell)
+    func todoCellWasTapped(cell: TodoCell) -> Bool
 }
 
 class TodoCell: UITableViewCell, UITextFieldDelegate  {
@@ -325,16 +326,21 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
 //    this is used to trigger textField editing
     @objc func handleTap(sender: UITapGestureRecognizer) {
         switch sender.state {
+
         case .ended:
-//            check of the textField is part of the active view hierarchy
-//            (otherwise canBecomeFirstResponder has undefined results)
-            if textField.window != nil && !isAlreadyDone{
-//                if textField.canBecomeFirstResponder{
+            //  inform the delegate
+            if (self.delegate?.todoCellWasTapped(cell: self) == false)
+            {
+                //            check of the textField is part of the active view hierarchy
+                //            (otherwise canBecomeFirstResponder has undefined results)
+                if textField.window != nil && !isAlreadyDone{
+                    //                if textField.canBecomeFirstResponder{
                     print("Cell in edit mode")
                     textField.becomeFirstResponder()
                     textField.isUserInteractionEnabled = true
                     TodoCell.isTextFieldEditing = true
-//                }
+                    //                }
+                }
             }
         default:
             return

@@ -803,10 +803,7 @@ extension ViewController: UIScrollViewDelegate{
                 
                 if switchToLists {
                     print("User released in List of Lists mode")
-                    self.list = "Lists"
-                    titleLabel.text = list
-                    self.loadToDoItems()
-                    self.tableView.reloadData()
+                    self.switchLists(list: "Lists")
                 } else {
                     // if at the moment the dragging ended (user released) the offset passed the threshold we are in adding mode
                     print("User released in Add mode")
@@ -823,6 +820,13 @@ extension ViewController: UIScrollViewDelegate{
         }else{ // in intial position (not scrolled)
             placeholderViewTop.backgroundColor = .black
         }
+    }
+    
+    func switchLists(list: String) {
+        self.list = list
+        titleLabel.text = list
+        self.loadToDoItems()
+        self.tableView.reloadData()
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -859,7 +863,16 @@ public extension UIColor {
 
 // MARK: - TodoCellDelegate Methods
 extension ViewController:TodoCellDelegate{
- 
+    func todoCellWasTapped(cell: TodoCell) -> Bool {
+        if list == "Lists" {
+            self.switchLists(list: cell.textField.text!)
+            return true
+        } else {
+            return false
+        }
+        
+    }
+    
     func todoCellWillModify(cell: TodoCell) {
         /*
              Will do the following:
