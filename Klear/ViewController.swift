@@ -783,13 +783,14 @@ extension ViewController: UIScrollViewDelegate{
             let dragPercentage = abs(scrollOffset) < abs(scrollOffsetThreshold) ? scrollOffset/scrollOffsetThreshold : 1.0
             let switchToLists = scrollOffset/scrollOffsetThreshold > 1.4
             
+            
             // set up the layer
-            newItemCellPlaceholder.backgroundColor = colors.first!
+            newItemCellPlaceholder.backgroundColor = switchToLists ? UIColor.black : colors.first!
             let alpha = baseAlpha + dragPercentage * (1-baseAlpha)
             newItemCellPlaceholder.isHidden = false
             newItemCellPlaceholder.alpha = alpha
-            print(dragPercentage)
-            newItemCellPlaceholder.textLabel?.text = dragPercentage < 1 ? "Pull to Create Item" : "Release to Create Item"
+            newItemCellPlaceholder.textLabel?.text = switchToLists ? "↑ Switch To Lists" : (dragPercentage < 1 ? "Pull to Create Item" : "Release to Create Item")
+            newItemCellPlaceholder.textLabel?.textAlignment = switchToLists ? NSTextAlignment.center :  NSTextAlignment.natural
             // transformRatio should go from pi/2 to 0
             let transformRatio = CGFloat.pi / 2.0 - (CGFloat.pi / 2.0) * dragPercentage
             if !editingMode {
