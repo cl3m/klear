@@ -10,6 +10,10 @@ import Foundation
 import CoreData
 
 class ItemRepo: NSManagedObject {
+    class func create() -> ToDo {
+        return ToDo(title: "", done: false)
+    }
+    
     class func clear(moc: NSManagedObjectContext) {
         let request = NSFetchRequest<Item>(entityName: "Item")
         let items = try! moc.fetch(request)
@@ -19,31 +23,21 @@ class ItemRepo: NSManagedObject {
     
     class func saveIn(moc: NSManagedObjectContext, todos: ToDos) {
         print("Saving items: " + todos.to_s())
-        
         clear(moc: moc)
 
-        todos.orderedListOfItems.forEach {
+        todos.forEach {
             let item = NSEntityDescription.insertNewObject(forEntityName: "Item", into:moc) as! Item
             item.title = $0.getTitle()
             item.done = $0.isDone()
+            try! moc.save()
         }
-        try! moc.save()
-    }
-    
-    class func create() -> ToDo {
-        return ToDo(title: "", done: false)
     }
 
     class func allIn(moc: NSManagedObjectContext) -> ToDos {
         let request = NSFetchRequest<Item>(entityName: "Item")
-        
-         do {
-             let items = try moc.fetch(request)
-             let todos = ToDos(items: items.map { ToDo(title: $0.title ?? "", done: $0.done)})
-             print("Loaded " + todos.to_s())
-             return todos
-         } catch {
-             return ToDos(items: [])
-         }
+        let items = try! moc.fetch(request)
+        let todos = ToDos(items: items.map { ToDo(title: $0.title ?? "", done: $0.done)})
+        print("Loaded " + todos.to_s())
+        return todos
     }
 }

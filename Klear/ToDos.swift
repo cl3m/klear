@@ -82,9 +82,9 @@ class ToDos {
         listOfItems.swapAt(from, to)
     }
     
-
-    
- 
+    func forEach(_ body: (ToDo) -> Void) {
+        listOfItems.forEach(body)
+    }
     
     var indexOfFirstNotDoneItem:Int{
         get{
@@ -104,7 +104,7 @@ class ToDos {
     
     // model and tableView have opposite orders
     // new item is appended in the model array , but shown first in the tableView
-    var orderedListOfItems:[ToDo] {
+    var todos:[ToDo] {
         get{
             var reversed = listOfItems
             reversed.reverse()
@@ -114,7 +114,7 @@ class ToDos {
     
     var indexOfFirstDoneItem: Int{
         get{
-            if let index = orderedListOfItems.firstIndex(where: { $0.isDone() }) {
+            if let index = todos.firstIndex(where: { $0.isDone() }) {
                 return index
             }else{
                 return 0

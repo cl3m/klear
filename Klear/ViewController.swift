@@ -265,8 +265,6 @@ class ViewController: UIViewController {
     }
     
     fileprivate func updateCell(_ index: Int, cell: TodoCell) {
-        //else just update the model
-        //print(">>> Update title from " + (self.listOfItems[index].title ?? "") + " to " +  cell.textField.text!)
         self.todos.getAt(index: index).setTitle(title: cell.textField.text)
         self.tableView.reloadData()
     }
@@ -329,33 +327,17 @@ class ViewController: UIViewController {
             4. make the new cell's text field the fiest responder
                (this triggers the whole editing procedure)
          */
+        print("addNewItem")
         let item = ItemRepo.create()
         todos.append(item: item)
         tableView.contentOffset.y = tableView.contentOffset.y + tableView.rowHeight
         tableView.reloadData()
        
         if let newCell =  tableView.cellForRow(at: indexPath) as? TodoCell{
+            print("Take focus")
+            newCell.textField.text = ""
             newCell.textField.becomeFirstResponder()
         }
-    }
-
-//MARK: - delete following only for debug purposes
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-
-        if gestureRecognizer == tapGestureRecognizer{
-            if editingMode{
-                return true
-            }else{
-                return false
-            }
-           
-        }else if gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self){
-          TodoCell.shoudlBlockTextField = true
-        }else{
-             TodoCell.shoudlBlockTextField = false
-        }
-
-        return true
     }
     
     //  currently not used
@@ -718,7 +700,7 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell") as! TodoCell
-        let todoItem = todos.orderedListOfItems[indexPath.row]
+        let todoItem = todos.todos[indexPath.row]
 
         cell.resetCell()
         cell.delegate = self
@@ -810,6 +792,7 @@ extension ViewController: UIScrollViewDelegate{
             if scrollOffsetWhenDraggingEnded < scrollOffsetThreshold{
                 // if at the moment the dragging ended (user released) the offset passed the threshold we are in adding mode
                 
+                print("Adding new item")
                 scrollOffsetWhenDraggingEnded = 0
                 addingNewItemMode = true //will exit only after textField ends editing
                 newItemCellPlaceholder.textLabel?.text = ""
@@ -923,7 +906,7 @@ extension ViewController:TodoCellDelegate{
         CATransaction.begin()
         //                get the absolute position of the cell and calculate
         //                the distance to the the top of the table
-        let distanceToTop = tableView.convert(cell.frame, to: view).minY - tableView.rowHeight
+        let distanceToTop = tableView.convert(cell.frame, to: view).minY - 60
         let currentOffset = tableView.contentOffset.y
         let newOffset = distanceToTop + currentOffset
         view.layoutIfNeeded()
@@ -1041,12 +1024,10 @@ extension ViewController:TodoCellDelegate{
                 destinationIndexPathForAnimation = destinationIndexPath
             }else{
                 if sourceIndexPath.row < destinationIndexPath.row{
-                    print("Moving down")
                     // destinationIndexPath is below the visible area
                     let last = visibileIndices.last!
                     destinationIndexPathForAnimation = IndexPath(row: last.row +  1, section: 0)
                 }else{
-                    print("Moving up")
                     // destinationIndexPath is above the visible area
                     let first = visibileIndices.first!
                     destinationIndexPathForAnimation = IndexPath(row: first.row - 1, section: 0 )
@@ -1073,13 +1054,11 @@ extension ViewController:TodoCellDelegate{
             
             tableView?.beginUpdates()
             // remove the chosen cell
-            print("Remove item at " + String(sourceIndex))
             self.todos.remove(at: sourceIndex)
             tableView?.deleteRows(at: [sourceIndexPath], with: .none)
             // create a dummy item at destination index (will act as placeholder while animation lasts)
             
             let dummyTodoItemAtDestination = ItemRepo.create()
-            print("Add brand new dummy item at " + String(destinationIndex))
             self.todos.insert(item: dummyTodoItemAtDestination, at: destinationIndex)
             tableView?.insertRows(at: [destinationIndexPath], with: .middle)
             tableView?.endUpdates()
@@ -1087,10 +1066,8 @@ extension ViewController:TodoCellDelegate{
         }) { (finished) in
             self.tableView.beginUpdates()
             // swap the dummyItem with the selected item
-            print("Finished. Remove dummy item at " + String(destinationIndex))
             self.todos.remove(at: destinationIndex)
             self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
-            print("Now add the original item " + originalTodoItem.getTitle() + " back in its new position " + String(destinationIndex))
             self.todos.insert(item: originalTodoItem, at: destinationIndex)
             ItemRepo.saveIn(moc: self.moc, todos: self.todos)
         

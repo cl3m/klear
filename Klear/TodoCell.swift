@@ -67,6 +67,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
     @IBOutlet var deleteLabelRightConstraint: NSLayoutConstraint!
     @IBOutlet var deleteLabel: UILabel!
     @IBOutlet var textField: UITextField!
+
     
     func setBackground(color: UIColor){
         self.textField.backgroundColor = color
@@ -108,6 +109,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // return the control if user taps the return key
         textField.isUserInteractionEnabled = false
+        print("resign " + textField.text!)
         textField.resignFirstResponder()
         return true
     }
@@ -414,6 +416,9 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
 extension UITextField{
 //    not sure if this is the correct way to do it.
     override open var canBecomeFirstResponder: Bool{
+        print("TRUE!!!")
         return true
     }
 }
+
+

@@ -29,3 +29,12 @@ class TableViewCell: UITableViewCell, UITextFieldDelegate{
         textField.text = text
     }
 }
+
+extension TableViewCell{
+//    not sure if this is the correct way to do it.
+    override open var canBecomeFirstResponder: Bool{
+        print("TRUE!!!")
+        return true
+    }
+}
+
