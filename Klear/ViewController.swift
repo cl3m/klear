@@ -23,7 +23,8 @@ class ViewController: UIViewController {
     @IBOutlet var blurView: UIVisualEffectView!
     @IBOutlet var placeHolderViewTopConstraint: NSLayoutConstraint!
     @IBOutlet var placeHolderViewHeightConstraint: NSLayoutConstraint!
- 
+    @IBOutlet var titleLabel: UILabel!
+
     //    MARK: - private constants
     
     private let colors: [UIColor] = [#colorLiteral(red: 0.8509803922, green: 0, blue: 0.0862745098, alpha: 1), #colorLiteral(red: 0.862745098, green: 0.1137254902, blue: 0.09019607843, alpha: 1), #colorLiteral(red: 0.8745098039, green: 0.2274509804, blue: 0.09411764706, alpha: 1),  #colorLiteral(red: 0.8862745098, green: 0.3450980392, blue: 0.09803921569, alpha: 1), #colorLiteral(red: 0.8941176471, green: 0.4588235294, blue: 0.1019607843, alpha: 1), #colorLiteral(red: 0.9058823529, green: 0.5725490196, blue: 0.1058823529, alpha: 1), #colorLiteral(red: 1, green: 0.7647058824, blue: 0.2431372549, alpha: 1)]
@@ -153,6 +154,9 @@ class ViewController: UIViewController {
        
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        titleLabel.text = list
         
         // setup the table view and the custom cell
         let todoCellView = UINib(nibName: "TodoCell", bundle: nil)
@@ -777,12 +781,14 @@ extension ViewController: UIScrollViewDelegate{
             placeHolderViewHeightConstraint.constant = 0.0
             let baseAlpha:CGFloat = 0.2
             let dragPercentage = abs(scrollOffset) < abs(scrollOffsetThreshold) ? scrollOffset/scrollOffsetThreshold : 1.0
+            let switchToLists = scrollOffset/scrollOffsetThreshold > 1.4
             
             // set up the layer
             newItemCellPlaceholder.backgroundColor = colors.first!
             let alpha = baseAlpha + dragPercentage * (1-baseAlpha)
             newItemCellPlaceholder.isHidden = false
             newItemCellPlaceholder.alpha = alpha
+            print(dragPercentage)
             newItemCellPlaceholder.textLabel?.text = dragPercentage < 1 ? "Pull to Create Item" : "Release to Create Item"
             // transformRatio should go from pi/2 to 0
             let transformRatio = CGFloat.pi / 2.0 - (CGFloat.pi / 2.0) * dragPercentage
