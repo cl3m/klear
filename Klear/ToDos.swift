@@ -9,44 +9,16 @@
 import Foundation
 
 class ToDo {
-    private var title: String
-    private var done: Bool
-
+    var title: String
+    var done: Bool
+    
     init(title: String, done: Bool) {
         self.title = title
         self.done = done
     }
     
-    func setTitle(title: String?) {
-        self.title = title ?? ""
-    }
-
-    func getTitle() -> String {
-        return title
-    }
-    
-    func isDone() -> Bool {
-        return done
-    }
-    
-    func isNotDone() -> Bool {
-        return !done
-    }
-    
-    func setNotDone() {
-        done = false
-    }
-    
-    func setDone() {
-        done = true
-    }
-    
-    func toggleDone() {
+    func toggle() {
         done = !done
-    }
-
-    func to_s() -> String {
-        "<" + title + "> " + String(done)
     }
 }
 
@@ -90,7 +62,7 @@ class ToDos {
     
     var indexOfFirstNotDoneItem:Int{
         get{
-            if let index = listOfItems.firstIndex(where: {$0.isNotDone() }){
+            if let index = listOfItems.firstIndex(where: {!$0.done}){
                 return listOfItems.count > 0 ? index - 1 : index
             }else{
                 return listOfItems.count - 1
@@ -100,7 +72,7 @@ class ToDos {
     
     //    helper for the calculation of colors
     var countOfNotDoneItems:Int{
-        return listOfItems.filter({$0.isNotDone()}).count
+        return listOfItems.filter({!$0.done}).count
     }
     
     
@@ -116,7 +88,7 @@ class ToDos {
     
     var indexOfFirstDoneItem: Int{
         get{
-            if let index = todos.firstIndex(where: { $0.isDone() }) {
+            if let index = todos.firstIndex(where: { $0.done}) {
                 return index
             }else{
                 return 0
@@ -126,7 +98,7 @@ class ToDos {
     
     var indexOfLastDoneItem:Int{
         get{
-            if let index = listOfItems.lastIndex(where: {$0.isDone() }){
+            if let index = listOfItems.lastIndex(where: {$0.done}){
                 return listOfItems.count > 0 ? index + 1 : index
             }else{
                 return 0
@@ -145,6 +117,6 @@ class ToDos {
     }
     
     func to_s() -> String {
-        listOfItems.map { $0.to_s() }.joined(separator: ", ")
+        listOfItems.map { "\($0)" }.joined(separator: ", ")
     }
 }

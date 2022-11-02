@@ -18,12 +18,6 @@ class ViewController: UIViewController {
 //    MARK: - outlets
   
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet var tableViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet var placeholderViewTop: UIView!
-    @IBOutlet var blurView: UIVisualEffectView!
-    @IBOutlet var placeHolderViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet var placeHolderViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet var titleLabel: UILabel!
 
     //    MARK: - private constants
     
@@ -102,11 +96,12 @@ class ViewController: UIViewController {
     
 //    this holds the actual items
     private var todos: ToDos = ToDos(items: [])
-    private var list: String = "Personal"
+    private var list: String = ""
     
     private func loadToDoItems(){
         print("Load items...")
-        todos = ItemRepo.allIn(moc: moc, list: list)
+        (list, todos) = ItemRepo.allIn(moc: moc, name: list.isEmpty ? nil : list)
+        title = list == listsName ? "Lists" : list
     }
 
 //    MARK: - helper UI variables and functions
@@ -155,9 +150,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        titleLabel.text = list
-        
         // setup the table view and the custom cell
         let todoCellView = UINib(nibName: "TodoCell", bundle: nil)
         self.tableView.register(todoCellView, forCellReuseIdentifier: "TodoCell")
@@ -172,8 +164,6 @@ class ViewController: UIViewController {
         tableView.allowsSelection = false
         tableView.allowsSelectionDuringEditing = false
         
-        tableViewInitialTopConstraint = tableViewTopConstraint.constant
-
         // initialize the list of items (and the table)
         loadToDoItems()
         // this is used to create a dummy cell at the top of the table while adding a new item
@@ -185,7 +175,6 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
 
-        placeHolderViewHeightConstraint.constant = 5.0 //!!CHECK!! I don't know if this is actually needed
         tableView.contentInset.bottom = tableView.rowHeight
 
         // setup the newItemPlaceHolder
@@ -259,7 +248,7 @@ class ViewController: UIViewController {
             self.tableView.performBatchUpdates({
                 print("Remove item")
                 self.todos.remove(at: index)
-                ItemRepo.saveIn(moc: self.moc, todos: self.todos, list: self.list)
+                ItemRepo.saveIn(moc: self.moc, todos: self.todos, name: self.list)
                 WidgetCenter.shared.reloadAllTimelines()
                 self.todos.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
@@ -270,7 +259,7 @@ class ViewController: UIViewController {
     }
     
     fileprivate func updateCell(_ index: Int, cell: TodoCell) {
-        self.todos.getAt(index: index).setTitle(title: cell.textField.text)
+        self.todos.getAt(index: index).title = cell.textField.text ?? ""
         self.tableView.reloadData()
     }
     
@@ -340,8 +329,8 @@ class ViewController: UIViewController {
        
         if let newCell =  tableView.cellForRow(at: indexPath) as? TodoCell{
             print("Take focus")
-            newCell.textField.text = ""
-            newCell.textField.becomeFirstResponder()
+            TodoCell.isTextFieldEditing = true
+            todoCellWillModify(cell: newCell)
         }
     }
     
@@ -438,13 +427,6 @@ class ViewController: UIViewController {
         switch sender.state {
             
         case .began:
-
-            // ignore if user touches the blurView
-            if blurView.frame.contains(locationInSuperView) {
-                sender.state = .cancelled
-                return
-            }
-            
             //save the initial position
             Drag.currentPosition = locationInSuperView
         
@@ -636,7 +618,7 @@ class ViewController: UIViewController {
         let endIndex = todos.rowNumberToIndex(from: j.row)
         print("Swap from " + String(initialIndex) + " to " + String(endIndex))
         todos.swap(from: initialIndex, to: endIndex)
-        ItemRepo.saveIn(moc: moc, todos: todos, list: list)
+        ItemRepo.saveIn(moc: moc, todos: todos, name: list)
         tableView.endUpdates()
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -655,16 +637,16 @@ class ViewController: UIViewController {
         //        we need to change it in the following situations:
         //        A. it is done and the previous one is not done
 
-        if todoItem.isDone() {
-            if initialIndex >  1 && todos.getAt(index: initialIndex - 1).isNotDone() {
-                todos.getAt(index: initialIndex).setNotDone()
+        if todoItem.done {
+            if initialIndex >  1 && !todos.getAt(index: initialIndex - 1).done {
+                todos.getAt(index: initialIndex).done = false
                 isChanged = true
                 
             }
 //        B. it is not done and the next one is done
         }else{
-            if initialIndex + 1 < todos.count() && todos.getAt(index: initialIndex + 1).isDone() {
-                todos.getAt(index: initialIndex).setDone()
+            if initialIndex + 1 < todos.count() && todos.getAt(index: initialIndex + 1).done {
+                todos.getAt(index: initialIndex).done = true
                     isChanged = true
                 }
             }
@@ -709,17 +691,17 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
 
         cell.resetCell()
         cell.delegate = self
-        cell.setText(todoItem.getTitle())
-        let cellColor = todoItem.isDone() ?  #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) : getColor(for: indexPath.row)
+        cell.setText(todoItem.title)
+        let cellColor = todoItem.done ?  #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) : getColor(for: indexPath.row)
             
         cell.setBackground(color: cellColor)
 
         // set the text attributes accoringly if item is done or not
-        if todoItem.isDone() {
+        if todoItem.done {
             cell.textField.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
             
             // make the text  strikethrough
-            let attributedString: NSMutableAttributedString =  NSMutableAttributedString(string: todoItem.getTitle())
+            let attributedString: NSMutableAttributedString =  NSMutableAttributedString(string: todoItem.title)
             let font = UIFont(name: "Helvetica", size: 17.0)
             attributedString.addAttribute(NSAttributedString.Key.font, value: font!, range: NSMakeRange(0, attributedString.length))
             attributedString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributedString.length))
@@ -731,7 +713,7 @@ extension ViewController:  UITableViewDelegate, UITableViewDataSource, UIGesture
             cell.textField.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
             cell.textField.isEnabled = true
         }
-        cell.isAlreadyDone = todoItem.isDone()
+        cell.isAlreadyDone = todoItem.done
         return cell
     }
     
@@ -778,17 +760,17 @@ extension ViewController: UIScrollViewDelegate{
         if scrollOffset < 0{ //dragging
             
             // if we are in the midst of a drag & drop operation, exit
-            placeHolderViewHeightConstraint.constant = 0.0
             let baseAlpha:CGFloat = 0.2
             let dragPercentage = abs(scrollOffset) < abs(scrollOffsetThreshold) ? scrollOffset/scrollOffsetThreshold : 1.0
-            let switchToLists = scrollOffset/scrollOffsetThreshold > 1.7
+            let switchToLists = scrollOffset/scrollOffsetThreshold > 1.7 && list != listsName
             
             // set up the layer
             newItemCellPlaceholder.backgroundColor = switchToLists ? UIColor.black : colors.first!
             let alpha = baseAlpha + dragPercentage * (1-baseAlpha)
             newItemCellPlaceholder.isHidden = false
             newItemCellPlaceholder.alpha = alpha
-            newItemCellPlaceholder.textLabel?.text = switchToLists ? "↑ Switch To Lists" : (dragPercentage < 1 ? "Pull to Create Item" : "Release to Create Item")
+            let name = list != listsName ? "Item" : "List"
+            newItemCellPlaceholder.textLabel?.text = switchToLists ? "↑ Switch To Lists" : (dragPercentage < 1 ? "Pull to Create \(name)" : "Release to Create \(name)")
             newItemCellPlaceholder.textLabel?.textAlignment = switchToLists ? NSTextAlignment.center :  NSTextAlignment.natural
             // transformRatio should go from pi/2 to 0
             let transformRatio = CGFloat.pi / 2.0 - (CGFloat.pi / 2.0) * dragPercentage
@@ -803,7 +785,7 @@ extension ViewController: UIScrollViewDelegate{
                 
                 if switchToLists {
                     print("User released in List of Lists mode")
-                    self.switchLists(list: "Lists")
+                    self.switchLists(list: listsName)
                 } else {
                     // if at the moment the dragging ended (user released) the offset passed the threshold we are in adding mode
                     print("User released in Add mode")
@@ -813,20 +795,13 @@ extension ViewController: UIScrollViewDelegate{
                     addNewItem(at: IndexPath(row: 0, section: 0))
                 }
             }
-        }else if scrollOffset > 0{//normal scrolling
-            // grow placeholder' height while scrolling (up to the height of a row)
-            placeHolderViewHeightConstraint.constant = scrollOffset < -scrollOffsetThreshold ? scrollOffset : tableView.rowHeight
-            placeholderViewTop.backgroundColor = getColorForPlaceHolderTop()
-        }else{ // in intial position (not scrolled)
-            placeholderViewTop.backgroundColor = .black
         }
     }
     
     func switchLists(list: String) {
         self.list = list
-        titleLabel.text = list
-        self.loadToDoItems()
-        self.tableView.reloadData()
+        loadToDoItems()
+        tableView.reloadData()
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -864,7 +839,7 @@ public extension UIColor {
 // MARK: - TodoCellDelegate Methods
 extension ViewController:TodoCellDelegate{
     func todoCellWasTapped(cell: TodoCell) -> Bool {
-        if list == "Lists" {
+        if list == listsName {
             self.switchLists(list: cell.textField.text!)
             return true
         } else {
@@ -922,6 +897,7 @@ extension ViewController:TodoCellDelegate{
         }) { (ended) in
             self.shadingView.removeFromSuperview()
             self.shadeAllOtherCellsExcept(cell: cell)
+            cell.edit()
         }
     }
     
@@ -949,9 +925,11 @@ extension ViewController:TodoCellDelegate{
             viewOnTop.removeFromSuperview()
             self.shadeAllOtherCellsExcept(cell: cell)
             self.shadingView.removeFromSuperview()
+            cell.edit()
         }
         
         CATransaction.commit()
+        
     }
     
     
@@ -962,8 +940,8 @@ extension ViewController:TodoCellDelegate{
         if let indexPath = tableView.indexPath(for: cell){
             let index = todos.rowNumberToIndex(from: indexPath.row)
             let item = todos.getAt(index: index)
-            item.setTitle(title: cell.textField.text)
-            ItemRepo.saveIn(moc: moc, todos: todos, list: list)
+            item.title = cell.textField.text ?? ""
+            ItemRepo.saveIn(moc: moc, todos: todos, name: list)
             WidgetCenter.shared.reloadAllTimelines()
         }
     }
@@ -977,7 +955,7 @@ extension ViewController:TodoCellDelegate{
             tableView.performBatchUpdates({
                 cell.delegate = nil
                 self.todos.remove(at: index)
-                ItemRepo.saveIn(moc: moc, todos: todos, list: list)
+                ItemRepo.saveIn(moc: moc, todos: todos, name: list)
                 WidgetCenter.shared.reloadAllTimelines()
                 
                 tableView.deleteRows(at: [indexPath], with: .left)
@@ -1013,15 +991,15 @@ extension ViewController:TodoCellDelegate{
             let sourceIndex = self.todos.rowNumberToIndex(from: sourceIndexPath.row)
 
             // 2. Calculate the destination
-            let destinationIndex = todos.getAt(index: sourceIndex).isDone() ? todos.indexOfFirstNotDoneItem :  todos.indexOfLastDoneItem
+            let destinationIndex = todos.getAt(index: sourceIndex).done ? todos.indexOfFirstNotDoneItem :  todos.indexOfLastDoneItem
             let destinationRow = todos.rowNumberToIndex(from: destinationIndex)
             let destinationIndexPath = IndexPath(row: destinationRow, section: 0)
 
             print("Marked as done from " + String(sourceIndex) + " to " + String(destinationIndex))
             
             // 3. Toggle the done property
-            todos.getAt(index: sourceIndex).toggleDone()
-            ItemRepo.saveIn(moc: moc, todos: todos, list: list)
+            todos.getAt(index: sourceIndex).toggle()
+            ItemRepo.saveIn(moc: moc, todos: todos, name: list)
             
             // 4. Animation - no animation if source == destination
             if destinationIndex != sourceIndex{
@@ -1075,7 +1053,7 @@ extension ViewController:TodoCellDelegate{
         // start animation
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [weak tableView = self.tableView] in
             animatedCell.frame = destinationFrame
-            if self.todos.getAt(index: sourceIndex).isDone() {
+            if self.todos.getAt(index: sourceIndex).done {
                 // if item is reset to not done,  bg and text color were previously changed (when threshold was passed). don't animate those
                 animatedCell.textField.backgroundColor = .black
                 animatedCell.contentView.backgroundColor = .black
@@ -1099,7 +1077,7 @@ extension ViewController:TodoCellDelegate{
             self.todos.remove(at: destinationIndex)
             self.tableView.deleteRows(at: [destinationIndexPath], with: .none)
             self.todos.insert(item: originalTodoItem, at: destinationIndex)
-            ItemRepo.saveIn(moc: self.moc, todos: self.todos, list: self.list)
+            ItemRepo.saveIn(moc: self.moc, todos: self.todos, name: self.list)
         
             self.tableView.insertRows(at: [destinationIndexPath], with: .none)
             self.tableView.endUpdates()

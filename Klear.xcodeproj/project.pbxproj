@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7547F46B2912ED80005A3F11 /* DummyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7547F4692912ED80005A3F11 /* DummyCell.swift */; };
+		7547F46C2912ED80005A3F11 /* DummyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7547F46A2912ED80005A3F11 /* DummyCell.xib */; };
 		974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C428EF6FFD00FA3E37 /* ItemRepo.swift */; };
 		974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974212C628EF73BF00FA3E37 /* CoreDataStack.swift */; };
 		974212CD28F0E3B500FA3E37 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */; };
@@ -29,9 +31,6 @@
 		BD14C92024A5002700209708 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C91F24A5002700209708 /* ViewController.swift */; };
 		BD14C92524A5002900209708 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD14C92424A5002900209708 /* Assets.xcassets */; };
 		BD14C92824A5002900209708 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD14C92624A5002900209708 /* LaunchScreen.storyboard */; };
-		BD14C93624A5012B00209708 /* DummyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C92F24A5012A00209708 /* DummyCell.swift */; };
-		BD14C93824A5012B00209708 /* DummyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD14C93124A5012A00209708 /* DummyCell.xib */; };
-		BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C93224A5012A00209708 /* TableViewCell.swift */; };
 		BD14C93A24A5012B00209708 /* TodoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD14C93324A5012A00209708 /* TodoCell.xib */; };
 		BD14C93C24A5012B00209708 /* TodoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14C93524A5012B00209708 /* TodoCell.swift */; };
 		BD14C93E24A5017E00209708 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD14C93D24A5017E00209708 /* Main.storyboard */; };
@@ -62,6 +61,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7547F4692912ED80005A3F11 /* DummyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyCell.swift; sourceTree = "<group>"; };
+		7547F46A2912ED80005A3F11 /* DummyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DummyCell.xib; sourceTree = "<group>"; };
 		974212C428EF6FFD00FA3E37 /* ItemRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRepo.swift; sourceTree = "<group>"; };
 		974212C628EF73BF00FA3E37 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		974212C828F092C400FA3E37 /* Klear.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Klear.entitlements; sourceTree = "<group>"; };
@@ -84,9 +85,6 @@
 		BD14C92424A5002900209708 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD14C92724A5002900209708 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BD14C92924A5002900209708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BD14C92F24A5012A00209708 /* DummyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyCell.swift; sourceTree = "<group>"; };
-		BD14C93124A5012A00209708 /* DummyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DummyCell.xib; sourceTree = "<group>"; };
-		BD14C93224A5012A00209708 /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		BD14C93324A5012A00209708 /* TodoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TodoCell.xib; sourceTree = "<group>"; };
 		BD14C93524A5012B00209708 /* TodoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoCell.swift; sourceTree = "<group>"; };
 		BD14C93D24A5017E00209708 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -128,6 +126,7 @@
 				979054E828E9EF4800FF8E13 /* KlearWidget.intentdefinition */,
 				979054E928E9EF4900FF8E13 /* Assets.xcassets */,
 				979054EB28E9EF4900FF8E13 /* Info.plist */,
+				974212C928F093FE00FA3E37 /* KlearWidgetExtension.entitlements */,
 			);
 			path = KlearWidget;
 			sourceTree = "<group>";
@@ -135,7 +134,6 @@
 		BD14C90F24A5002700209708 = {
 			isa = PBXGroup;
 			children = (
-				974212C928F093FE00FA3E37 /* KlearWidgetExtension.entitlements */,
 				BD14C91A24A5002700209708 /* Klear */,
 				979054E528E9EF4800FF8E13 /* KlearWidget */,
 				979054E028E9EF4700FF8E13 /* Frameworks */,
@@ -155,25 +153,24 @@
 		BD14C91A24A5002700209708 /* Klear */ = {
 			isa = PBXGroup;
 			children = (
-				BD14C92924A5002900209708 /* Info.plist */,
-				977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */,
-				974212C828F092C400FA3E37 /* Klear.entitlements */,
 				BD14C91B24A5002700209708 /* AppDelegate.swift */,
 				BD14C91D24A5002700209708 /* SceneDelegate.swift */,
-				BD14C92F24A5012A00209708 /* DummyCell.swift */,
-				BD14C93124A5012A00209708 /* DummyCell.xib */,
-				BD14C93224A5012A00209708 /* TableViewCell.swift */,
 				BD14C93524A5012B00209708 /* TodoCell.swift */,
 				BD14C93324A5012A00209708 /* TodoCell.xib */,
+				7547F4692912ED80005A3F11 /* DummyCell.swift */,
+				7547F46A2912ED80005A3F11 /* DummyCell.xib */,
 				BD14C91F24A5002700209708 /* ViewController.swift */,
 				BD14C93D24A5017E00209708 /* Main.storyboard */,
-				BD14C92424A5002900209708 /* Assets.xcassets */,
 				BD14C92624A5002900209708 /* LaunchScreen.storyboard */,
 				974212C628EF73BF00FA3E37 /* CoreDataStack.swift */,
 				974212C428EF6FFD00FA3E37 /* ItemRepo.swift */,
 				97591C7028F8857B001076E1 /* Direction.swift */,
 				97591C7228F8859A001076E1 /* Drag.swift */,
 				97591C7628F886A4001076E1 /* ToDos.swift */,
+				977887FD28EA2FD400C92F0A /* Model.xcdatamodeld */,
+				BD14C92424A5002900209708 /* Assets.xcassets */,
+				BD14C92924A5002900209708 /* Info.plist */,
+				974212C828F092C400FA3E37 /* Klear.entitlements */,
 			);
 			path = Klear;
 			sourceTree = "<group>";
@@ -267,9 +264,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7547F46C2912ED80005A3F11 /* DummyCell.xib in Resources */,
 				BD14C92824A5002900209708 /* LaunchScreen.storyboard in Resources */,
 				BD14C92524A5002900209708 /* Assets.xcassets in Resources */,
-				BD14C93824A5012B00209708 /* DummyCell.xib in Resources */,
 				BD14C93E24A5017E00209708 /* Main.storyboard in Resources */,
 				BD14C93A24A5012B00209708 /* TodoCell.xib in Resources */,
 			);
@@ -297,15 +294,14 @@
 			files = (
 				979054ED28E9EF4900FF8E13 /* KlearWidget.intentdefinition in Sources */,
 				BD14C92024A5002700209708 /* ViewController.swift in Sources */,
+				7547F46B2912ED80005A3F11 /* DummyCell.swift in Sources */,
 				BD14C91C24A5002700209708 /* AppDelegate.swift in Sources */,
 				97591C7728F886A4001076E1 /* ToDos.swift in Sources */,
 				97591C7328F8859A001076E1 /* Drag.swift in Sources */,
 				974212C528EF6FFD00FA3E37 /* ItemRepo.swift in Sources */,
-				BD14C93924A5012B00209708 /* TableViewCell.swift in Sources */,
 				974212C728EF73BF00FA3E37 /* CoreDataStack.swift in Sources */,
 				97591C7128F8857B001076E1 /* Direction.swift in Sources */,
 				977887FF28EA2FD400C92F0A /* Model.xcdatamodeld in Sources */,
-				BD14C93624A5012B00209708 /* DummyCell.swift in Sources */,
 				BD14C91E24A5002700209708 /* SceneDelegate.swift in Sources */,
 				BD14C93C24A5012B00209708 /* TodoCell.swift in Sources */,
 			);
@@ -340,7 +336,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_ENTITLEMENTS = KlearWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KlearWidget/KlearWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;
@@ -371,7 +367,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_ENTITLEMENTS = KlearWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KlearWidget/KlearWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YWXKS4E5M8;

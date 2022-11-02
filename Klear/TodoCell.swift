@@ -57,7 +57,7 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
     //    MARK: - global (static) vars for panning/editing
     private static var isPanning = false //use this to block other cell cell panning while this is editing
     static var shoudlBlockTextField = false //??
-    private static var isTextFieldEditing = false // use this to block other cell interaction while this is editing
+    public static var isTextFieldEditing = false // use this to block other cell interaction while this is editing
     
     //    MARK: - outlets
     @IBOutlet var checkLabel: UILabel!
@@ -331,19 +331,23 @@ class TodoCell: UITableViewCell, UITextFieldDelegate  {
             //  inform the delegate
             if (self.delegate?.todoCellWasTapped(cell: self) == false)
             {
-                //            check of the textField is part of the active view hierarchy
-                //            (otherwise canBecomeFirstResponder has undefined results)
-                if textField.window != nil && !isAlreadyDone{
-                    //                if textField.canBecomeFirstResponder{
-                    print("Cell in edit mode")
-                    textField.becomeFirstResponder()
-                    textField.isUserInteractionEnabled = true
-                    TodoCell.isTextFieldEditing = true
-                    //                }
-                }
+                edit()
             }
         default:
             return
+        }
+    }
+    
+    func edit() {
+        //            check of the textField is part of the active view hierarchy
+        //            (otherwise canBecomeFirstResponder has undefined results)
+        if textField.window != nil && !isAlreadyDone{
+            //                if textField.canBecomeFirstResponder{
+            print("Cell in edit mode")
+            textField.isUserInteractionEnabled = true
+            textField.becomeFirstResponder()
+            TodoCell.isTextFieldEditing = true
+            //                }
         }
     }
     
