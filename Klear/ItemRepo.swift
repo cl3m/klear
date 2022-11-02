@@ -31,37 +31,41 @@ class ItemRepo {
             for list in lists {
                 if !todos.todos.map(\.title).contains(list.title ?? "") {
                     moc.delete(list)
-                    try! moc.save()
+                } else {
+                    list.order = Int16(todos.todos.map(\.title).firstIndex(of: list.title!) ?? 0)
                 }
             }
             for list in todos.todos.map(\.title) {
                 if !lists.map(\.title).contains(list) {
-                    _ = create(moc, name: list)
+                    let newList = create(moc, name: list)
+                    newList.order = Int16(todos.todos.map(\.title).firstIndex(of: list) ?? 0)
                 }
             }
+            try! moc.save()
         } else {
             let list = getList(moc: moc, name: name)
             clear(moc: moc, list: list)
             
-            todos.forEach {
+            todos.listOfItems.enumerated().forEach({ el in
                 let item = NSEntityDescription.insertNewObject(forEntityName: "Item", into:moc) as! Item
-                item.title = $0.title
-                item.done = $0.done
+                item.title = el.element.title
+                item.done = el.element.done
+                item.order = Int16(el.offset)
                 item.list = list
                 try! moc.save()
-            }
+            })
         }
     }
     
     class func allIn(moc: NSManagedObjectContext, name: String? = nil) -> (String, ToDos) {
         if name == listsName {
-            let lists = try! moc.fetch(NSFetchRequest<List>(entityName: "List"))            
+            let lists = try! moc.fetch(NSFetchRequest<List>(entityName: "List")).sorted(by: { $0.order > $1.order})
             let todos = ToDos(items: lists.map { ToDo(title: $0.title ?? "", done: false)})
             print("Loaded from " + name! + ": " + todos.to_s())
             return (name!, todos)
         } else {
             let list = getList(moc: moc, name: name ?? getLists(moc).first?.title ?? "Personal")
-            let items = allRaw(moc: moc, list: list)
+            let items = allRaw(moc: moc, list: list).sorted(by: { $0.order < $1.order})
             let todos = ToDos(items: items.map { ToDo(title: $0.title ?? "", done: $0.done)})
             print("Loaded from " + (list.title ?? "") + ": " + todos.to_s())
             return (list.title ?? "", todos)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ToDo {
+class ToDo: CustomStringConvertible {
     var title: String
     var done: Bool
     
@@ -20,11 +20,15 @@ class ToDo {
     func toggle() {
         done = !done
     }
+    
+    var description: String {
+        return "\(title)\(done ? "✅":"")"
+    }
 }
 
 class ToDos {
     //    this holds the actual items
-    private var listOfItems:[ToDo] = []
+    private(set) var listOfItems:[ToDo] = []
         
     init(items: [ToDo]) {
         listOfItems = items

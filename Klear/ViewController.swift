@@ -88,9 +88,11 @@ class ViewController: UIViewController {
     
 //   MARK: - gesture recognizers
 
-    private var tapGestureRecognizer = UITapGestureRecognizer()
-    private var longGestureRecognizer = UILongPressGestureRecognizer()
-    private var pinchGestureRecognizer = UIPinchGestureRecognizer()
+    private var tapGestureRecognizer: UITapGestureRecognizer!
+    private var longGestureRecognizer: UILongPressGestureRecognizer!
+    private var addTapGestureRecognizer: UITapGestureRecognizer!
+    private var leftEdgeGestureRecognizer: UIScreenEdgePanGestureRecognizer!
+    private var rightEdgeGestureRecognizer: UIScreenEdgePanGestureRecognizer!
 
 //    MARK: - model helper functions
     
@@ -125,14 +127,20 @@ class ViewController: UIViewController {
 
     private func blockInteractions(){
         tableView.isScrollEnabled = false
-        self.tableView.dragInteractionEnabled = false
+        tableView.dragInteractionEnabled = false
         longGestureRecognizer.isEnabled = false
+        leftEdgeGestureRecognizer.isEnabled = false
+        rightEdgeGestureRecognizer.isEnabled = false
+        addTapGestureRecognizer.isEnabled = false
     }
     
     private func unBlockInteractions(){
         tableView.isScrollEnabled = true
-        self.tableView.dragInteractionEnabled = true
+        tableView.dragInteractionEnabled = true
         longGestureRecognizer.isEnabled = true
+        leftEdgeGestureRecognizer.isEnabled = true
+        rightEdgeGestureRecognizer.isEnabled = true
+        addTapGestureRecognizer.isEnabled = true
     }
     
     private func getColorForPlaceHolderTop() -> UIColor{
@@ -164,6 +172,8 @@ class ViewController: UIViewController {
         tableView.allowsSelection = false
         tableView.allowsSelectionDuringEditing = false
         
+        tableView.tableFooterView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 1000, height: 1000)))
+        
         // initialize the list of items (and the table)
         loadToDoItems()
         // this is used to create a dummy cell at the top of the table while adding a new item
@@ -194,6 +204,26 @@ class ViewController: UIViewController {
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(handleTap))
         tapGestureRecognizer.delegate = self
         tapGestureRecognizer.delaysTouchesBegan = true
+        
+        // swipe to left list
+        leftEdgeGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action:#selector(handleLeftEdge))
+        leftEdgeGestureRecognizer.edges = .left
+        leftEdgeGestureRecognizer.delegate = self
+        leftEdgeGestureRecognizer.delaysTouchesBegan = true
+        leftEdgeGestureRecognizer.cancelsTouchesInView = true
+        view.addGestureRecognizer(leftEdgeGestureRecognizer)
+        
+        // swipe to right list
+        rightEdgeGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action:#selector(handleRightEdge))
+        rightEdgeGestureRecognizer.edges = .right
+        rightEdgeGestureRecognizer.delaysTouchesBegan = true
+        rightEdgeGestureRecognizer.delegate = self
+        rightEdgeGestureRecognizer.cancelsTouchesInView = true
+        view.addGestureRecognizer(rightEdgeGestureRecognizer)
+
+        // create new item
+        addTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(handleAddTap))
+        tableView.tableFooterView?.addGestureRecognizer(addTapGestureRecognizer)
 
         // initial setup for scrolling zones
         defaultScrollingLimit = tableView.rowHeight * 2.0
@@ -250,7 +280,6 @@ class ViewController: UIViewController {
                 self.todos.remove(at: index)
                 ItemRepo.saveIn(moc: self.moc, todos: self.todos, name: self.list)
                 WidgetCenter.shared.reloadAllTimelines()
-                self.todos.remove(at: index)
                 self.tableView.deleteRows(at: [indexPath], with: .none)
             }) { (done) in
                 self.tableView.reloadData()
@@ -351,6 +380,24 @@ class ViewController: UIViewController {
     @objc func handleTap(sender: UITapGestureRecognizer) {
         if sender.state == .ended, editingMode == true{
             view.endEditing(false)
+        }
+    }
+    
+    @objc func handleAddTap(sender: UITapGestureRecognizer) {
+        if sender.state == .ended, editingMode == false {
+            addItemBottom()
+        }
+    }
+    
+    @objc func handleLeftEdge(sender: UIScreenEdgePanGestureRecognizer) {
+        if sender.state == .ended {
+            print("edge")
+        }
+    }
+    
+    @objc func handleRightEdge(sender: UIScreenEdgePanGestureRecognizer) {
+        if sender.state == .ended {
+            print("edge")
         }
     }
 
@@ -791,7 +838,6 @@ extension ViewController: UIScrollViewDelegate{
                     print("User released in Add mode")
                     
                     addingNewItemMode = true //will exit only after textField ends editing
-                    
                     addNewItem(at: IndexPath(row: 0, section: 0))
                 }
             }
@@ -912,7 +958,7 @@ extension ViewController:TodoCellDelegate{
         CATransaction.begin()
         //                get the absolute position of the cell and calculate
         //                the distance to the the top of the table
-        let distanceToTop = tableView.convert(cell.frame, to: view).minY - 60
+        let distanceToTop = 0.0
         let currentOffset = tableView.contentOffset.y
         let newOffset = distanceToTop + currentOffset
         view.layoutIfNeeded()
@@ -1090,5 +1136,20 @@ extension ViewController:TodoCellDelegate{
             self.view.layoutIfNeeded()
         }
         CATransaction.commit()
+    }
+    
+    private func addItemBottom() {
+        //TODO: Add animation
+        addingNewItemMode = true //will exit only after textField ends editing
+        todos.insert(item: ItemRepo.create(), at: 0)
+        ItemRepo.saveIn(moc: moc, todos: todos, name: list)
+        tableView.reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            if let cell = self.tableView.visibleCells.last as? TodoCell {
+                TodoCell.isTextFieldEditing = true
+                self.todoCellWillModify(cell: cell)
+                cell.edit()
+            }
+        }
     }
 }
