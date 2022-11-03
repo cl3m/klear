@@ -43,7 +43,7 @@ class CoreDataStack {
     class func storeUrl() -> NSURL {
         let fm = FileManager.default
         let documentDirUrl = fm.containerURL(
-              forSecurityApplicationGroupIdentifier: "group.com.skw.klear")!
+              forSecurityApplicationGroupIdentifier: "group.com.rouge41.klear")!
 
         let dataDir = documentDirUrl.appendingPathComponent("Klear/Data")
         let sqliteUrl = dataDir.appendingPathComponent("klear.sqlite")
